@@ -88,12 +88,12 @@ const buildAdminApiUrl = (path: string) => {
 async function adminFetch<T>(path: string, init: RequestInit): Promise<ApiResponse<T>> {
   try {
     const token = await getBearerToken();
-    console.log('[adminFetch] Token status:', { 
-      hasToken: !!token, 
+    console.log('[adminFetch] Token status:', {
+      hasToken: !!token,
       tokenLength: token?.length || 0,
       tokenPreview: token ? `${token.substring(0, 20)}...` : 'None'
     });
-    
+
     const url = buildAdminApiUrl(path);
 
     // Log request details
@@ -106,15 +106,30 @@ async function adminFetch<T>(path: string, init: RequestInit): Promise<ApiRespon
       },
       body: init.body ? JSON.parse(init.body as string) : undefined
     });
-    
-    const res = await fetch(url, {
-      ...init,
-      headers: {
-        'Content-Type': 'application/json',
-        ...(init.headers || {}),
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-    });
+
+    let res: Response;
+    try {
+      res = await fetch(url, {
+        ...init,
+        headers: {
+          'Content-Type': 'application/json',
+          ...(init.headers || {}),
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      });
+    } catch (fetchError) {
+      // Network error or fetch failure
+      const errorMsg = fetchError instanceof Error ? fetchError.message : 'Network request failed';
+      console.error('[adminFetch] Fetch failed:', {
+        url,
+        error: errorMsg,
+        fetchError
+      });
+      return formatResponse<T>(null as any, {
+        message: `Network error: ${errorMsg}. Please check your connection and try again.`,
+        originalError: errorMsg
+      }, path);
+    }
 
     // Log response details
     console.log('[adminFetch] Response:', {
