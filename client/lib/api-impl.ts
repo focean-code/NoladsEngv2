@@ -119,11 +119,13 @@ async function adminFetch<T>(path: string, init: RequestInit): Promise<ApiRespon
       });
     } catch (fetchError) {
       // Network error or fetch failure
-      const errorMsg = fetchError instanceof Error ? fetchError.message : 'Network request failed';
+      const errorMsg = fetchError instanceof Error ? fetchError.message : String(fetchError);
       console.error('[adminFetch] Fetch failed:', {
         url,
+        method: init.method,
         error: errorMsg,
-        fetchError
+        errorType: fetchError instanceof Error ? fetchError.constructor.name : typeof fetchError,
+        stack: fetchError instanceof Error ? fetchError.stack : undefined
       });
       return formatResponse<T>(null as any, {
         message: `Network error: ${errorMsg}. Please check your connection and try again.`,
