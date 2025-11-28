@@ -65,24 +65,24 @@ async function getBearerToken(): Promise<string | undefined> {
 }
 const buildAdminApiUrl = (path: string) => {
   const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+
+  // Prefer relative URLs (same origin) by default - works in all environments
+  // This ensures API requests go to the same server serving the frontend
+  if (typeof window !== 'undefined') {
+    return normalizedPath;
+  }
+
+  // Fallback for non-browser environments (server-side rendering, etc.)
   const proxyUrl = import.meta.env.VITE_API_PROXY_URL?.trim();
   if (proxyUrl) {
     return new URL(normalizedPath, proxyUrl).toString();
   }
+
   const configuredBase = import.meta.env.VITE_API_BASE?.trim();
-  if (configuredBase) {
-    if (configuredBase.startsWith('http')) {
-      return new URL(normalizedPath, configuredBase).toString();
-    }
-    if (typeof window !== 'undefined') {
-      const relativeBase = configuredBase.startsWith('/') ? configuredBase : `/${configuredBase}`;
-      const absoluteBase = new URL(relativeBase, window.location.origin).toString();
-      return new URL(normalizedPath, absoluteBase).toString();
-    }
+  if (configuredBase && configuredBase.startsWith('http')) {
+    return new URL(normalizedPath, configuredBase).toString();
   }
-  if (typeof window !== 'undefined') {
-    return new URL(normalizedPath, window.location.origin).toString();
-  }
+
   return normalizedPath;
 };
 async function adminFetch<T>(path: string, init: RequestInit): Promise<ApiResponse<T>> {
