@@ -255,7 +255,7 @@ export class Analytics {
     document.addEventListener('click', (e) => {
       const target = e.target as HTMLElement;
       const tagName = target.tagName.toLowerCase();
-      const className = target.className;
+      const className = typeof target.className === 'string' ? target.className : '';
       const id = target.id;
       const text = target.textContent?.trim().substring(0, 50);
 
