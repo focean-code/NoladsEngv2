@@ -22,10 +22,32 @@ export const createApp = () => {
   const app = express();
 
   // Middleware
+  const corsOrigins = process.env.CORS_ORIGIN
+    ? process.env.CORS_ORIGIN.split(',').map(o => o.trim()).filter(Boolean)
+    : ['http://localhost:5173', 'http://localhost:8080', 'http://localhost:3000'];
+
+  console.log('[CORS] Configured origins:', corsOrigins);
+
   app.use(cors({
-    origin: process.env.CORS_ORIGIN?.split(',') || ['http://localhost:5173', 'http://localhost:8080', 'http://localhost:3000'],
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) {
+        return callback(null, true);
+      }
+
+      // Check if origin is in the whitelist
+      if (corsOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      // Log rejected origins for debugging
+      console.warn(`[CORS] Rejected origin: ${origin}`);
+      return callback(new Error('CORS policy violation'));
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    credentials: true,
+    maxAge: 3600
   }));
   app.use(express.json({ limit: process.env.UPLOAD_MAX_SIZE || '2mb' }));
 
@@ -107,4 +129,3 @@ export const createApp = () => {
 const app = createApp();
 
 export default app;
-
