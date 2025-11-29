@@ -82,23 +82,19 @@ async function getBearerToken(): Promise<string | undefined> {
 const buildAdminApiUrl = (path: string) => {
   const normalizedPath = path.startsWith("/") ? path : `/${path}`;
 
-  // Prefer relative URLs (same origin) by default - works in all environments
-  // This ensures API requests go to the same server serving the frontend
-  if (typeof window !== "undefined") {
-    return normalizedPath;
-  }
-
-  // Fallback for non-browser environments (server-side rendering, etc.)
-  const proxyUrl = import.meta.env.VITE_API_PROXY_URL?.trim();
-  if (proxyUrl) {
-    return new URL(normalizedPath, proxyUrl).toString();
-  }
-
+  // Priority 1: Check for explicit API base URL
   const configuredBase = import.meta.env.VITE_API_BASE?.trim();
   if (configuredBase && configuredBase.startsWith("http")) {
     return new URL(normalizedPath, configuredBase).toString();
   }
 
+  // Priority 2: Check for proxy URL (non-browser environments)
+  const proxyUrl = import.meta.env.VITE_API_PROXY_URL?.trim();
+  if (proxyUrl) {
+    return new URL(normalizedPath, proxyUrl).toString();
+  }
+
+  // Priority 3: Fall back to relative URLs (same origin)
   return normalizedPath;
 };
 async function adminFetch<T>(
