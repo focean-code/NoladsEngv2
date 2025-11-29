@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "nolads-engineering",
+  "private_key_id": "7eb6f95c830eb967bf36c828a306b6b355dd9bb5",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC/nXrjL2IgNfmV\n5GhZNixtYszXYufC7LIzS0oQP0PHUv667c6W44C67tGK2NUGWXF6tPPuUmKzxDRK\n0Hdryiz/lWzDQgZ1S+W/irQgIXQQfOixw0tvTrfNiN7hLhb+NlIOUOJOZJk/kf1q\nLAA0JGIp+wMgDQbvaG7WwKBwk0g5RvtSIR7MDAqaGFiPa1RvQRaFWeOKlTpP3vmY\nP6C2xU3s37vX+j8QkKnRLELfSXY4rfLgfM8sOnXXAU8cAtyfkMZAMz5GWgrlAQVZ\nA7N0ELVqG7wpmNkxj7ZHhDHrQCqIx3X0kyu8eS950Twfoj/f58+X80LRGkAVEZg0\ni3IOBZihAgMBAAECggEAFuJk8csP6g7oLvmnaLgqmCnLkxGx4jrIkY21W7lii+Si\nnYqXOLgVAL5S8kUxM9/syJ3h4B2gwh11rVW2XX4435Fl+u/gu5OD7dtP5eJ47Rst\n40UStkltdDObgsMxZczxAdqxHHGxR8FUxaBZqeCKhL8AwYwsvtz3F9jLkIZWgth9\nJKN7LVHi29tkZluJrarbhT05D4EvNDR5i9ZvjOeH3LNO9h0C6EuUvAVrcA7CUPM8\nOy4TLkRUWpWj7/ofPCr/v/S4slC+rar2HWyScTYUhNV5ldbc9yRXan0CJOxFLdNr\nW9vCElNoAfsflGsyl+ADHM7MXzuaP3vnattnn3I1kQKBgQD3K8bye/ct+Imh8ZOw\nTTA0EngmcgQU68wI2sRtEIXRSG/SW0/GUwTjyTMJo191Ivj0KeB8/4L4057Qelk6\nJ48dohCJuNGVFTp54pKh5rnWDybev8425o6pF1X56rrXfyaHxfVrJroVkutzwUVY\ni00JEzlwD9qULelHJzzpK5PjdQKBgQDGda4CB18A4REb4vR0gSlHLx7kOQmNF8+j\nDNRqIO4vJrRphbGqpEetDkfvXYfewGvKRRs2qBrM0mOwEJI1k6Lw5v30Ine22loP\n0QS2ssWpMeBX/Wrn9ZhnEsumpy8BqKHGVeTT2Mfjdt7ts933WsyWze1+sjRGDLNT\naisplJLW/QKBgQDGvsutBSL/Mv6wWgiwVZCx/jvgZgOEMwoQAKC7NfL0EnPfyI5/\n4Rdodcr1MAm8rY9S/S1GNUpB/B+ScR64FUENydfUdekIIFax1Q6k4lqBlhNiPwZ4\nvLDvpBT87NKqHtKDkBjDvRMZ79YlcL3q8a/S4UNpKUZPqg8OqK1grCqxVQKBgHXr\nHkUeVBiVojDLnSxMQlaFbPl12nL3Huxmhx+4CU4C1VeNlI8rpVryDVPwYva7plA8\n13qWT7Y7m/fVIMqsujghR+tzP2ZqPvD+5KoZdtCdTgt6C7dfefpkdJTE6W024UiT\naK9nMv24d6UNJmn+jWldWivZfq3QhgyeHJ9MJCORAoGBAI3dvVFRSocfDjMw5V3q\nl06HpeCPQnfpDeEDp5d7JAQmx2G3TSflFq1J77SxT84saWK3WLLsaeIHBbDTF6Pk\ne/wwi2alRgN6M5pNESCCU3Wp+LZMgRwdjwzRPgKuBntR7r+9WOlS3COLFr3U73p9\nMOkKOw8iZaOyIfjsBFKAZw0c\n-----END PRIVATE KEY-----\n",
+  "client_email": "nolads-ga4-service@nolads-engineering.iam.gserviceaccount.com",
+  "client_id": "117004859793135032639",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/nolads-ga4-service%40nolads-engineering.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
