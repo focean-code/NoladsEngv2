@@ -604,8 +604,14 @@ import { AnalyticsOverview, RealTimeData, ConversionData } from '@shared/analyti
 import { ApiResponse } from '@shared/api';
 
 async function fetchJSON<T = any>(url: string): Promise<T> {
-  const sep = url.includes('?') ? '&' : '?';
-  const tsUrl = `${url}${sep}ts=${Date.now()}`;
+  // Build the full URL with API base if configured
+  const apiBase = import.meta.env.VITE_API_BASE?.trim();
+  const fullUrl = apiBase && apiBase.startsWith('http') && url.startsWith('/')
+    ? new URL(url, apiBase).toString()
+    : url;
+
+  const sep = fullUrl.includes('?') ? '&' : '?';
+  const tsUrl = `${fullUrl}${sep}ts=${Date.now()}`;
   const opts: RequestInit = { cache: 'no-store', headers: { 'cache-control': 'no-store' } };
   try {
     const res = await fetch(tsUrl, opts);
