@@ -1,5 +1,5 @@
-import { Router } from 'express';
-import { ga4Analytics } from '../services/ga4Analytics.ts';
+import { Router } from "express";
+import { ga4Analytics } from "../services/ga4Analytics.ts";
 
 const router = Router();
 
@@ -7,27 +7,36 @@ const router = Router();
 router.use((req, res, next) => {
   // Get allowed origins from environment
   const corsOrigins = process.env.CORS_ORIGIN
-    ? process.env.CORS_ORIGIN.split(',').map(o => o.trim()).filter(Boolean)
-    : ['http://localhost:5173', 'http://localhost:8080', 'http://localhost:3000'];
+    ? process.env.CORS_ORIGIN.split(",")
+        .map((o) => o.trim())
+        .filter(Boolean)
+    : [
+        "http://localhost:5173",
+        "http://localhost:8080",
+        "http://localhost:3000",
+      ];
 
-  const origin = req.get('origin');
+  const origin = req.get("origin");
 
   // Set CORS headers
   if (!origin || corsOrigins.includes(origin)) {
-    res.header('Access-Control-Allow-Origin', origin || '*');
-    res.header('Access-Control-Allow-Methods', 'GET, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    res.header('Access-Control-Max-Age', '3600');
+    res.header("Access-Control-Allow-Origin", origin || "*");
+    res.header("Access-Control-Allow-Methods", "GET, OPTIONS");
+    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    res.header("Access-Control-Max-Age", "3600");
   }
 
   // Prevent caching
-  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-  res.setHeader('Pragma', 'no-cache');
-  res.setHeader('Expires', '0');
-  res.setHeader('Surrogate-Control', 'no-store');
+  res.setHeader(
+    "Cache-Control",
+    "no-store, no-cache, must-revalidate, proxy-revalidate",
+  );
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Expires", "0");
+  res.setHeader("Surrogate-Control", "no-store");
 
   // Handle preflight requests
-  if (req.method === 'OPTIONS') {
+  if (req.method === "OPTIONS") {
     return res.sendStatus(200);
   }
 
@@ -69,7 +78,7 @@ const FALLBACK_DATA: AnalyticsFallbackData = {
   conversionRate: 0,
   revenue: 0,
   goalCompletions: [],
-  lastUpdated: new Date().toISOString()
+  lastUpdated: new Date().toISOString(),
 };
 
 const METRICS_FALLBACK = {
@@ -77,34 +86,39 @@ const METRICS_FALLBACK = {
   sessions: 0,
   screenPageViews: 0,
   averageSessionDuration: 0,
-  bounceRate: 0
+  bounceRate: 0,
 };
 
 const TIMESERIES_FALLBACK = {
   labels: [] as string[],
   users: [] as number[],
-  sessions: [] as number[]
+  sessions: [] as number[],
 };
 
 const SOURCES_FALLBACK = {
   labels: [] as string[],
-  sessions: [] as number[]
+  sessions: [] as number[],
 };
 
-const handleAnalyticsError = (res: any, error: any, message: string, fallbackData: any = null) => {
+const handleAnalyticsError = (
+  res: any,
+  error: any,
+  message: string,
+  fallbackData: any = null,
+) => {
   console.error(`Error in analytics route: ${message}`, error);
 
   // Always return 200 with fallback data so the UI remains functional
   return res.json({
     success: true,
     error: message,
-    data: fallbackData || FALLBACK_DATA
+    data: fallbackData || FALLBACK_DATA,
   });
 };
 
-router.get('/overview', async (req, res) => {
+router.get("/overview", async (req, res) => {
   if (!ga4Analytics.isConfigured) {
-    return handleAnalyticsError(res, null, 'GA4 not configured', FALLBACK_DATA);
+    return handleAnalyticsError(res, null, "GA4 not configured", FALLBACK_DATA);
   }
 
   try {
@@ -112,10 +126,15 @@ router.get('/overview', async (req, res) => {
       ga4Analytics.getBasicMetrics(),
       ga4Analytics.getTopPages(),
       ga4Analytics.getTrafficSources(),
-      ga4Analytics.getDeviceBreakdown()
+      ga4Analytics.getDeviceBreakdown(),
     ]);
     if (!overview) {
-      return handleAnalyticsError(res, null, 'No analytics data available', FALLBACK_DATA);
+      return handleAnalyticsError(
+        res,
+        null,
+        "No analytics data available",
+        FALLBACK_DATA,
+      );
     }
 
     const data = {
@@ -126,20 +145,25 @@ router.get('/overview', async (req, res) => {
       avgSessionDuration: overview.averageSessionDuration || 0,
       topPages: topPages || [],
       trafficSources: trafficSources || [],
-      deviceBreakdown: devices || []
+      deviceBreakdown: devices || [],
     };
 
     return res.json({
       success: true,
       error: null,
-      data
+      data,
     });
   } catch (error) {
-    return handleAnalyticsError(res, error, 'Failed to fetch analytics overview', FALLBACK_DATA);
+    return handleAnalyticsError(
+      res,
+      error,
+      "Failed to fetch analytics overview",
+      FALLBACK_DATA,
+    );
   }
 });
 
-router.get('/metrics', async (req, res) => {
+router.get("/metrics", async (req, res) => {
   if (!ga4Analytics.isConfigured) {
     return res.json(METRICS_FALLBACK);
   }
@@ -148,12 +172,12 @@ router.get('/metrics', async (req, res) => {
     const metrics = await ga4Analytics.getBasicMetrics();
     return res.json(metrics || METRICS_FALLBACK);
   } catch (error) {
-    console.error('Failed to fetch GA4 metrics', error);
+    console.error("Failed to fetch GA4 metrics", error);
     return res.json(METRICS_FALLBACK);
   }
 });
 
-router.get('/timeseries', async (req, res) => {
+router.get("/timeseries", async (req, res) => {
   if (!ga4Analytics.isConfigured) {
     return res.json(TIMESERIES_FALLBACK);
   }
@@ -164,12 +188,12 @@ router.get('/timeseries', async (req, res) => {
     const data = await ga4Analytics.getTimeseriesData(days);
     return res.json(data || TIMESERIES_FALLBACK);
   } catch (error) {
-    console.error('Failed to fetch GA4 timeseries', error);
+    console.error("Failed to fetch GA4 timeseries", error);
     return res.json(TIMESERIES_FALLBACK);
   }
 });
 
-router.get('/sources', async (req, res) => {
+router.get("/sources", async (req, res) => {
   if (!ga4Analytics.isConfigured) {
     return res.json(SOURCES_FALLBACK);
   }
@@ -178,24 +202,30 @@ router.get('/sources', async (req, res) => {
     const sources = await ga4Analytics.getTrafficSources();
     const chartData = {
       labels: sources?.map((source: any) => source.source) || [],
-      sessions: sources?.map((source: any) => Number(source.percentage) || 0) || []
+      sessions:
+        sources?.map((source: any) => Number(source.percentage) || 0) || [],
     };
     return res.json(chartData);
   } catch (error) {
-    console.error('Failed to fetch GA4 sources', error);
+    console.error("Failed to fetch GA4 sources", error);
     return res.json(SOURCES_FALLBACK);
   }
 });
 
-router.get('/realtime', async (req, res) => {
+router.get("/realtime", async (req, res) => {
   if (!ga4Analytics.isConfigured) {
-    return handleAnalyticsError(res, null, 'GA4 not configured', FALLBACK_DATA);
+    return handleAnalyticsError(res, null, "GA4 not configured", FALLBACK_DATA);
   }
 
   try {
     const data = await ga4Analytics.getTimeseriesData();
     if (!data) {
-      return handleAnalyticsError(res, null, 'No realtime data available', FALLBACK_DATA);
+      return handleAnalyticsError(
+        res,
+        null,
+        "No realtime data available",
+        FALLBACK_DATA,
+      );
     }
 
     const realtimeData = {
@@ -204,30 +234,40 @@ router.get('/realtime', async (req, res) => {
       topPages: [],
       currentPages: [],
       deviceBreakdown: [],
-      countries: []
+      countries: [],
     };
 
     return res.json({
       success: true,
       error: null,
-      data: realtimeData
+      data: realtimeData,
     });
   } catch (error) {
-    return handleAnalyticsError(res, error, 'Failed to fetch realtime data', FALLBACK_DATA);
+    return handleAnalyticsError(
+      res,
+      error,
+      "Failed to fetch realtime data",
+      FALLBACK_DATA,
+    );
   }
 });
 
-router.get('/conversions', async (req, res) => {
+router.get("/conversions", async (req, res) => {
   if (!ga4Analytics.isConfigured) {
-    return handleAnalyticsError(res, null, 'GA4 not configured', FALLBACK_DATA);
+    return handleAnalyticsError(res, null, "GA4 not configured", FALLBACK_DATA);
   }
 
   try {
     const metrics = await ga4Analytics.getBasicMetrics();
-    const eventName = process.env.GA4_CONVERSION_EVENT || 'generate_lead';
+    const eventName = process.env.GA4_CONVERSION_EVENT || "generate_lead";
     const eventSummary = await ga4Analytics.getEventCountSummary(eventName);
     if (!metrics) {
-      return handleAnalyticsError(res, null, 'No conversion data available', FALLBACK_DATA);
+      return handleAnalyticsError(
+        res,
+        null,
+        "No conversion data available",
+        FALLBACK_DATA,
+      );
     }
 
     const conversionData = {
@@ -235,16 +275,21 @@ router.get('/conversions', async (req, res) => {
       conversionRate: 0,
       revenue: 0,
       goalCompletions: [],
-      lastUpdated: new Date().toISOString()
+      lastUpdated: new Date().toISOString(),
     };
 
     return res.json({
       success: true,
       error: null,
-      data: conversionData
+      data: conversionData,
     });
   } catch (error) {
-    return handleAnalyticsError(res, error, 'Failed to fetch conversion data', FALLBACK_DATA);
+    return handleAnalyticsError(
+      res,
+      error,
+      "Failed to fetch conversion data",
+      FALLBACK_DATA,
+    );
   }
 });
 
