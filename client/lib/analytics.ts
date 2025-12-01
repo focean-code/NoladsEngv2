@@ -672,13 +672,33 @@ async function fetchJSON<T = any>(url: string): Promise<T> {
     cache: "no-store",
     headers: { "cache-control": "no-store" },
   };
+
   try {
     const res = await fetch(tsUrl, opts);
     return await res.json();
   } catch (e) {
-    // Retry once with a fresh request if the body was already consumed
-    const res2 = await fetch(`${tsUrl}&retry=1`, opts);
-    return await res2.json();
+    // If full URL failed and it's different from relative URL, try relative URL as fallback
+    if (fullUrl !== url && url.startsWith("/")) {
+      console.warn(`[Analytics] Full URL fetch failed, retrying with relative URL: ${url}`, e);
+      try {
+        const relSep = url.includes("?") ? "&" : "?";
+        const relUrl = `${url}${relSep}ts=${Date.now()}`;
+        const res = await fetch(relUrl, opts);
+        return await res.json();
+      } catch (relError) {
+        console.error(`[Analytics] Relative URL also failed:`, relError);
+        throw relError;
+      }
+    }
+
+    // Otherwise retry once with a fresh request
+    try {
+      const res2 = await fetch(`${tsUrl}&retry=1`, opts);
+      return await res2.json();
+    } catch (retryError) {
+      console.error(`[Analytics] Retry also failed:`, retryError);
+      throw retryError;
+    }
   }
 }
 
