@@ -271,8 +271,13 @@ const AdminPage = () => {
 
       setAnalyticsData(formattedData);
     } catch (error) {
-      console.error('Error fetching analytics:', error);
-      toast.error(error instanceof Error ? error.message : 'Failed to load analytics data');
+      // Analytics failures should be silent - just use empty data
+      console.warn('Analytics fetch failed, using empty data:', error);
+      setAnalyticsData({
+        overview: { pageViews: 0, sessions: 0, users: 0, bounceRate: 0, topPages: [], trafficSources: [], deviceBreakdown: [], lastUpdated: new Date().toISOString() },
+        realTime: { activeUsers: 0, currentPage: '', device: '', browser: '' },
+        conversions: { totalConversions: 0, conversionRate: 0, revenue: 0, goalCompletions: [], lastUpdated: new Date().toISOString() }
+      });
     } finally {
       setLoading(false);
     }
