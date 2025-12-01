@@ -48,8 +48,10 @@ export const createApp = () => {
         }
 
         // In production, always allow to prevent CORS blocking
-        if (process.env.NODE_ENV === 'production') {
-          console.warn(`[CORS] Warning: Origin not in whitelist but allowing in production: ${origin}`);
+        if (process.env.NODE_ENV === "production") {
+          console.warn(
+            `[CORS] Warning: Origin not in whitelist but allowing in production: ${origin}`,
+          );
           return callback(null, true);
         }
 
