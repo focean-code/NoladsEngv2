@@ -249,22 +249,22 @@ const AdminPage = () => {
           users: analyticsRes.data?.users || 0,
           bounceRate: analyticsRes.data?.bounceRate || 0,
           topPages: analyticsRes.data?.topPages || [],
-          trafficSources: analyticsRes.data.trafficSources || [],
-          deviceBreakdown: analyticsRes.data.deviceBreakdown || []
+          trafficSources: analyticsRes.data?.trafficSources || [],
+          deviceBreakdown: analyticsRes.data?.deviceBreakdown || []
         },
         realTime: {
-          ...realTimeRes.data,
-          activeUsers: realTimeRes.data.activeUsers || 0,
-          currentPage: realTimeRes.data.currentPage || '',
-          device: realTimeRes.data.device || '',
-          browser: realTimeRes.data.browser || ''
+          ...(realTimeRes.data || {}),
+          activeUsers: realTimeRes.data?.activeUsers || 0,
+          currentPage: realTimeRes.data?.currentPage || '',
+          device: realTimeRes.data?.device || '',
+          browser: realTimeRes.data?.browser || ''
         },
         conversions: {
-          ...conversionRes.data,
-          totalConversions: conversionRes.data.totalConversions || 0,
-          conversionRate: conversionRes.data.conversionRate || 0,
-          revenue: conversionRes.data.revenue || 0,
-          goalCompletions: conversionRes.data.goalCompletions || [],
+          ...(conversionRes.data || {}),
+          totalConversions: conversionRes.data?.totalConversions || 0,
+          conversionRate: conversionRes.data?.conversionRate || 0,
+          revenue: conversionRes.data?.revenue || 0,
+          goalCompletions: conversionRes.data?.goalCompletions || [],
           lastUpdated: new Date().toISOString()
         }
       };
