@@ -3,12 +3,34 @@ import { ga4Analytics } from '../services/ga4Analytics.ts';
 
 const router = Router();
 
-// Prevent any caching on analytics endpoints - middleware for all routes
+// CORS and caching middleware for all analytics routes
 router.use((req, res, next) => {
+  // Get allowed origins from environment
+  const corsOrigins = process.env.CORS_ORIGIN
+    ? process.env.CORS_ORIGIN.split(',').map(o => o.trim()).filter(Boolean)
+    : ['http://localhost:5173', 'http://localhost:8080', 'http://localhost:3000'];
+
+  const origin = req.get('origin');
+
+  // Set CORS headers
+  if (!origin || corsOrigins.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin || '*');
+    res.header('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.header('Access-Control-Max-Age', '3600');
+  }
+
+  // Prevent caching
   res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
   res.setHeader('Pragma', 'no-cache');
   res.setHeader('Expires', '0');
   res.setHeader('Surrogate-Control', 'no-store');
+
+  // Handle preflight requests
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+
   next();
 });
 
