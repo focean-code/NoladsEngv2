@@ -25,21 +25,21 @@ export const createApp = () => {
   const corsOrigins = process.env.CORS_ORIGIN
     ? process.env.CORS_ORIGIN.split(',').map(o => o.trim()).filter(Boolean)
     : ['http://localhost:5173', 'http://localhost:8080', 'http://localhost:3000'];
-
+  
   console.log('[CORS] Configured origins:', corsOrigins);
-
+  
   app.use(cors({
     origin: (origin, callback) => {
       // Allow requests with no origin (like mobile apps or curl requests)
       if (!origin) {
         return callback(null, true);
       }
-
+      
       // Check if origin is in the whitelist
       if (corsOrigins.includes(origin)) {
         return callback(null, true);
       }
-
+      
       // Log rejected origins for debugging
       console.warn(`[CORS] Rejected origin: ${origin}`);
       return callback(new Error('CORS policy violation'));
