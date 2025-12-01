@@ -238,21 +238,17 @@ const AdminPage = () => {
         api.analytics.getConversionData()
       ]);
 
-      // Validate responses
-      if (!analyticsRes.success || !realTimeRes.success || !conversionRes.success) {
-        throw new Error('Failed to fetch one or more analytics endpoints');
-      }
-
+      // Use data even if fetch failed (will have fallback empty values)
       // Format and merge analytics data
       const formattedData = {
         overview: {
           ...analyticsRes.data,
           lastUpdated: new Date().toISOString(),
-          pageViews: analyticsRes.data.pageViews || 0,
-          sessions: analyticsRes.data.sessions || 0,
-          users: analyticsRes.data.users || 0,
-          bounceRate: analyticsRes.data.bounceRate || 0,
-          topPages: analyticsRes.data.topPages || [],
+          pageViews: analyticsRes.data?.pageViews || 0,
+          sessions: analyticsRes.data?.sessions || 0,
+          users: analyticsRes.data?.users || 0,
+          bounceRate: analyticsRes.data?.bounceRate || 0,
+          topPages: analyticsRes.data?.topPages || [],
           trafficSources: analyticsRes.data.trafficSources || [],
           deviceBreakdown: analyticsRes.data.deviceBreakdown || []
         },
