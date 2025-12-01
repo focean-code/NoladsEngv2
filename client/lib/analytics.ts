@@ -682,7 +682,10 @@ async function fetchJSON<T = any>(url: string): Promise<T> {
   } catch (e) {
     // If full URL failed and it's different from relative URL, try relative URL as fallback
     if (fullUrl !== url && url.startsWith("/")) {
-      console.warn(`[Analytics] Full URL fetch failed (${fullUrl}), retrying with relative URL: ${url}`, e);
+      console.warn(
+        `[Analytics] Full URL fetch failed (${fullUrl}), retrying with relative URL: ${url}`,
+        e,
+      );
       try {
         const relSep = url.includes("?") ? "&" : "?";
         const relUrl = `${url}${relSep}ts=${Date.now()}`;
@@ -692,7 +695,10 @@ async function fetchJSON<T = any>(url: string): Promise<T> {
         }
         return await res.json();
       } catch (relError) {
-        console.error(`[Analytics] Relative URL also failed (${url}):`, relError);
+        console.error(
+          `[Analytics] Relative URL also failed (${url}):`,
+          relError,
+        );
         throw relError;
       }
     }
