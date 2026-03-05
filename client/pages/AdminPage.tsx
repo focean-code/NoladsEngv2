@@ -70,8 +70,6 @@ import {
 } from "../../shared/api";
 import { toast } from "sonner";
 import { api } from "../lib/api";
-// PostHog Dashboard - replacing GA4Dashboard
-import { GA4Dashboard } from "@/components/GA4Dashboard";
 import { supabase } from "../lib/supabase";
 
 const AdminPage = () => {
@@ -269,43 +267,34 @@ const AdminPage = () => {
     }
   };
 
-  // Fetch PostHog Analytics data
+  // Fetch PostHog Analytics data (GA4 API calls disabled - using PostHog instead)
   const fetchAnalytics = async () => {
     try {
       setLoading(true);
-      const [analyticsRes, realTimeRes, conversionRes] = await Promise.all([
-        api.analytics.getGoogleAnalytics(),
-        api.analytics.getRealTimeData(),
-        api.analytics.getConversionData(),
-      ]);
-
-      // Use data even if fetch failed (will have fallback empty values)
-      // Format and merge analytics data
+      // GA4 API calls removed - using PostHog for analytics
+      // Return empty data structure since we're using PostHog
       const formattedData = {
         overview: {
-          ...analyticsRes.data,
+          pageViews: 0,
+          sessions: 0,
+          users: 0,
+          bounceRate: 0,
+          topPages: [],
+          trafficSources: [],
+          deviceBreakdown: [],
           lastUpdated: new Date().toISOString(),
-          pageViews: analyticsRes.data?.pageViews || 0,
-          sessions: analyticsRes.data?.sessions || 0,
-          users: analyticsRes.data?.users || 0,
-          bounceRate: analyticsRes.data?.bounceRate || 0,
-          topPages: analyticsRes.data?.topPages || [],
-          trafficSources: analyticsRes.data?.trafficSources || [],
-          deviceBreakdown: analyticsRes.data?.deviceBreakdown || [],
         },
         realTime: {
-          ...(realTimeRes.data || {}),
-          activeUsers: realTimeRes.data?.activeUsers || 0,
-          currentPages: realTimeRes.data?.currentPages || [],
-          deviceBreakdown: realTimeRes.data?.deviceBreakdown || [],
-          countries: realTimeRes.data?.countries || [],
+          activeUsers: 0,
+          currentPages: [],
+          deviceBreakdown: [],
+          countries: [],
         },
         conversions: {
-          ...(conversionRes.data || {}),
-          totalConversions: conversionRes.data?.totalConversions || 0,
-          conversionRate: conversionRes.data?.conversionRate || 0,
-          revenue: conversionRes.data?.revenue || 0,
-          goalCompletions: conversionRes.data?.goalCompletions || [],
+          totalConversions: 0,
+          conversionRate: 0,
+          revenue: 0,
+          goalCompletions: [],
           lastUpdated: new Date().toISOString(),
         },
       };

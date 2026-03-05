@@ -34,6 +34,7 @@ export const createApp = () => {
         "http://localhost:3000",
         "https://noladseng.com",
         "https://www.noladseng.com",
+        "https://nolads-eng.vercel.app",
       ];
 
   console.log("[CORS] Configured origins:", corsOrigins);

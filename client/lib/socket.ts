@@ -35,22 +35,21 @@ let singletonSocket: MinimalSocket = mockSocket;
 
 // Only attempt real Socket.IO connection if explicitly enabled.
 // This prevents production consoles from being spammed when no Socket.IO server exists.
-const enableRealSocket =
-  typeof import.meta !== 'undefined' &&
-  (import.meta as any).env &&
-  (import.meta as any).env.VITE_ENABLE_SOCKET === 'true';
+// Note: We use direct property access so Vite can properly tree-shake when not enabled.
+const enableRealSocket = import.meta.env.VITE_ENABLE_SOCKET === 'true';
 
-if (enableRealSocket) {
-  // Attempt to dynamically load socket.io-client if available.
+if (import.meta.env.DEV && enableRealSocket) {
+  // Attempt to dynamically load socket.io-client if available and in dev mode.
   // This runs in the background; if it succeeds, we replace the mock with the real socket.
   (async () => {
     try {
-      // Dynamically import to avoid build-time resolution errors when package is missing
-      const { io } = await import('socket.io-client');
+      // Using vite-ignore comment to prevent build-time resolution
+      // @ts-ignore - socket.io-client may not be installed
+      const { io } = await import(/* @vite-ignore */ 'socket.io-client');
       const real = io('/', { transports: ['websocket'] });
 
       // Replace methods with real socket methods while keeping the same reference
-      // so consumers don’t need to re-import
+      // so consumers don't need to re-import
       singletonSocket.on = real.on.bind(real);
       singletonSocket.off = real.off.bind(real);
       singletonSocket.emit = real.emit.bind(real);
@@ -62,7 +61,7 @@ if (enableRealSocket) {
         configurable: true,
       });
     } catch (err) {
-      if (typeof console !== 'undefined' && (import.meta as any).env?.DEV) {
+      if (typeof console !== 'undefined') {
         console.warn('[socket] socket.io-client not installed or Socket.IO server not available; using mock socket.');
       }
     }

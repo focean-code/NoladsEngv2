@@ -681,13 +681,16 @@ async function fetchJSON<T = any>(url: string): Promise<T> {
     return await res.json();
   } catch (e) {
     // If full URL failed and it's different from relative URL, try relative URL as fallback
-    if (fullUrl !== url && url.startsWith("/")) {
+    // BUT only if it's a same-origin request (the API base is not a full URL or matches the current origin)
+    const isCrossOrigin = apiBase && apiBase.startsWith('http') && !apiBase.includes(window.location.origin);
+    
+    if (fullUrl !== url && url.startsWith('/') && !isCrossOrigin) {
       console.warn(
         `[Analytics] Full URL fetch failed (${fullUrl}), retrying with relative URL: ${url}`,
         e,
       );
       try {
-        const relSep = url.includes("?") ? "&" : "?";
+        const relSep = url.includes('?') ? '&' : '?';
         const relUrl = `${url}${relSep}ts=${Date.now()}`;
         const res = await fetch(relUrl, opts);
         if (!res.ok) {
@@ -701,6 +704,13 @@ async function fetchJSON<T = any>(url: string): Promise<T> {
         );
         throw relError;
       }
+    } else if (isCrossOrigin) {
+      // Cross-origin request failed - don't retry with relative URL as it would hit wrong server
+      console.error(
+        `[Analytics] Cross-origin request failed (${fullUrl}), skipping relative URL fallback`,
+        e,
+      );
+      throw e;
     }
 
     // Otherwise retry once with a fresh request
