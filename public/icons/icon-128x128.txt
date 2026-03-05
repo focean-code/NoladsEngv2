@@ -1,0 +1,6 @@
+# Icon 128x128
+# This is a placeholder. In production, convert the SVG to PNG at 128x128 resolution.
+# You can use tools like:
+# - sharp (Node.js)
+# - ImageMagick
+# - Online SVG to PNG converters

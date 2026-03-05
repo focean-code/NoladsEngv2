@@ -1,0 +1,50 @@
+# Robots.txt for Nolads Engineering
+# https://www.noladseng.com
+
+# Main search engine bots
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Googlebot-Image
+Allow: /
+
+User-agent: Googlebot-News
+Allow: /blog/
+
+User-agent: Bingbot
+Allow: /
+
+# Social media bots
+User-agent: Twitterbot
+Allow: /
+
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: LinkedInBot
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+# All other bots
+User-agent: *
+Allow: /
+
+# Disallow admin and private areas
+Disallow: /admin/
+Disallow: /api/admin/
+Disallow: /private/
+Disallow: /*?
+Disallow: /login
+
+# Allow access to sitemap
+Allow: /sitemap.xml
+
+# Sitemap locations (both static and dynamic)
+Sitemap: https://www.noladseng.com/sitemap.xml
+Sitemap: https://www.noladseng.com/api/seo/sitemap.xml
+
+# Host directive
+Host: https://www.noladseng.com
