@@ -263,7 +263,7 @@ const ProductCard = React.forwardRef<HTMLDivElement, ProductCardProps>(
       {...props}
     >
       {image && (
-        <div className="relative h-40 bg-slate-100">
+        <div className="relative h-32 bg-slate-100">
           <img
             src={image}
             alt={title}

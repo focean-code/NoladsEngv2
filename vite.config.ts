@@ -87,12 +87,8 @@ function adminApiPlugin(env: Record<string, string>): Plugin {
 
         console.log('[admin-api-plugin] Mounting routes:');
 
-        // Set up CORS for admin routes
+        // Keep admin OPTIONS requests responsive (no CORS headers here)
         app.use('/api/admin', (req, res, next) => {
-          res.header('Access-Control-Allow-Origin', '*');
-          res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS');
-          res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-          
           if (req.method === 'OPTIONS') {
             return res.sendStatus(200);
           }
@@ -226,12 +222,8 @@ function adminApiPlugin(env: Record<string, string>): Plugin {
 
         console.log('[admin-api-plugin] Mounting preview routes:');
 
-        // Set up CORS for admin routes
+        // Keep admin OPTIONS requests responsive (no CORS headers here)
         app.use('/api/admin', (req, res, next) => {
-          res.header('Access-Control-Allow-Origin', '*');
-          res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS');
-          res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-          
           if (req.method === 'OPTIONS') {
             return res.sendStatus(200);
           }

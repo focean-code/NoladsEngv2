@@ -2,7 +2,6 @@ import { supabase } from "./supabase";
 import type { ApiResponse } from "../types/api";
 import type { SupabaseApiClient } from "../types/supabase";
 import type { ContactMessage } from "@shared/api";
-import { ga4Client } from "./analytics";
 
 // Helper function to format Supabase responses as ApiResponse
 function isNetworkError(err: any): boolean {
@@ -82,9 +81,28 @@ async function getBearerToken(): Promise<string | undefined> {
 const buildAdminApiUrl = (path: string) => {
   const normalizedPath = path.startsWith("/") ? path : `/${path}`;
 
+  // In the browser we always want same-origin requests.
+  // This prevents CORS/preflight failures when `VITE_API_BASE` is misconfigured.
+  if (typeof window !== "undefined") {
+    return normalizedPath;
+  }
+
   // Priority 1: Check for explicit API base URL
   const configuredBase = import.meta.env.VITE_API_BASE?.trim();
   if (configuredBase && configuredBase.startsWith("http")) {
+    // In production, prefer same-origin API to avoid CORS/preflight issues.
+    // If someone accidentally sets VITE_API_BASE to a different origin, ignore it in the browser.
+    try {
+      if (import.meta.env.PROD && typeof window !== "undefined") {
+        const baseOrigin = new URL(configuredBase).origin;
+        if (baseOrigin !== window.location.origin) {
+          return normalizedPath;
+        }
+      }
+    } catch {
+      // If configuredBase isn't a valid URL, fall back to relative.
+      return normalizedPath;
+    }
     return new URL(normalizedPath, configuredBase).toString();
   }
 
@@ -281,9 +299,16 @@ export const api: SupabaseApiClient = {
     },
   },
   users: {
-    getAll: async () => {
+    getAll: async (params?: { page?: number; limit?: number }) => {
       try {
-        const { data, error } = await supabase.from("users").select("*");
+        let query = supabase.from("users").select("*");
+
+        if (params?.limit) {
+          const offset = ((params?.page || 1) - 1) * params.limit;
+          query = query.range(offset, offset + params.limit - 1);
+        }
+
+        const { data, error } = await query;
         if (error && (error as any).code === "PGRST116") {
           console.warn("[users.getAll] Table missing, returning empty list");
           return formatResponse([] as any, null, "users.getAll");
@@ -394,9 +419,17 @@ export const api: SupabaseApiClient = {
         return formatResponse(null, error, "blog.getBySlug");
       }
     },
-    listAll: async () => {
+    listAll: async (params?: { page?: number; limit?: number }) => {
       try {
-        return await adminFetch("/api/admin/blog", {
+        const qs = new URLSearchParams();
+        if (params?.page) qs.set("page", String(params.page));
+        if (params?.limit) qs.set("limit", String(params.limit));
+
+        const url = qs.toString()
+          ? `/api/admin/blog?${qs.toString()}`
+          : "/api/admin/blog";
+
+        return await adminFetch(url, {
           method: "GET",
         });
       } catch (error) {
@@ -1048,171 +1081,64 @@ export const api: SupabaseApiClient = {
   },
   analytics: {
     getGoogleAnalytics: async () => {
-      try {
-        const response = await ga4Client.getGoogleAnalytics();
-        // Return empty analytics data if server fails
-        if (!response.success) {
-          console.warn("[Analytics] GA4 data fetch failed, using empty data");
-          return formatResponse(
-            {
-              pageViews: 0,
-              sessions: 0,
-              users: 0,
-              newUsers: 0,
-              bounceRate: 0,
-              avgSessionDuration: 0,
-              pagesPerSession: 0,
-              topPages: [],
-              trafficSources: [],
-              deviceBreakdown: [],
-              lastUpdated: new Date().toISOString(),
-            },
-            null,
-            "analytics.getGoogleAnalytics",
-          );
-        }
-        return response;
-      } catch (error) {
-        console.warn("[Analytics] GA4 error:", error);
-        return formatResponse(
-          {
-            pageViews: 0,
-            sessions: 0,
-            users: 0,
-            newUsers: 0,
-            bounceRate: 0,
-            avgSessionDuration: 0,
-            pagesPerSession: 0,
-            topPages: [],
-            trafficSources: [],
-            deviceBreakdown: [],
-            lastUpdated: new Date().toISOString(),
-          },
-          null,
-          "analytics.getGoogleAnalytics",
-        );
-      }
+      // GA4 removed; PostHog is used for analytics now.
+      // Keep the method for compatibility but never call GA4 endpoints.
+      return formatResponse(
+        {
+          pageViews: 0,
+          sessions: 0,
+          users: 0,
+          newUsers: 0,
+          bounceRate: 0,
+          avgSessionDuration: 0,
+          pagesPerSession: 0,
+          topPages: [],
+          trafficSources: [],
+          deviceBreakdown: [],
+          lastUpdated: new Date().toISOString(),
+        } as any,
+        null,
+        "analytics.getGoogleAnalytics",
+      );
     },
     getRealTimeData: async () => {
-      try {
-        const response = await ga4Client.getRealTimeData();
-        // Return empty realtime data if server fails
-        if (!response.success) {
-          console.warn(
-            "[Analytics] Realtime data fetch failed, using empty data",
-          );
-          return formatResponse(
-            {
-              activeUsers: 0,
-              pageViews: 0,
-              currentPages: [],
-              deviceBreakdown: [],
-              countries: [],
-            },
-            null,
-            "analytics.getRealTimeData",
-          );
-        }
-        return response;
-      } catch (error) {
-        console.warn("[Analytics] Realtime error:", error);
-        return formatResponse(
-          {
-            activeUsers: 0,
-            currentPages: [],
-            deviceBreakdown: [],
-            countries: [],
-          },
-          null,
-          "analytics.getRealTimeData",
-        );
-      }
+      return formatResponse(
+        {
+          activeUsers: 0,
+          pageViews: 0,
+          currentPages: [],
+          deviceBreakdown: [],
+          countries: [],
+        } as any,
+        null,
+        "analytics.getRealTimeData",
+      );
     },
     getConversionData: async () => {
-      try {
-        const response = await ga4Client.getConversionData();
-        // Return empty conversion data if server fails
-        if (!response.success) {
-          console.warn(
-            "[Analytics] Conversion data fetch failed, using empty data",
-          );
-          return formatResponse(
-            {
-              totalConversions: 0,
-              conversionRate: 0,
-              revenue: 0,
-              goalCompletions: [],
-              lastUpdated: new Date().toISOString(),
-            },
-            null,
-            "analytics.getConversionData",
-          );
-        }
-        return response;
-      } catch (error) {
-        console.warn("[Analytics] Conversion error:", error);
-        return formatResponse(
-          {
-            totalConversions: 0,
-            conversionRate: 0,
-            revenue: 0,
-            goalCompletions: [],
-            lastUpdated: new Date().toISOString(),
-          },
-          null,
-          "analytics.getConversionData",
-        );
-      }
+      return formatResponse(
+        {
+          totalConversions: 0,
+          conversionRate: 0,
+          revenue: 0,
+          goalCompletions: [],
+          lastUpdated: new Date().toISOString(),
+        } as any,
+        null,
+        "analytics.getConversionData",
+      );
     },
     refresh: async () => {
-      try {
-        const [analyticsRes, realTimeRes, conversionRes] = await Promise.all([
-          api.analytics.getGoogleAnalytics(),
-          api.analytics.getRealTimeData(),
-          api.analytics.getConversionData(),
-        ]);
+      const [analyticsRes, realTimeRes, conversionRes] = await Promise.all([
+        api.analytics.getGoogleAnalytics(),
+        api.analytics.getRealTimeData(),
+        api.analytics.getConversionData(),
+      ]);
 
-        return formatResponse({
-          analytics: analyticsRes.data,
-          realTime: realTimeRes.data,
-          conversions: conversionRes.data,
-        });
-      } catch (error) {
-        // Return empty data for all analytics if refresh fails
-        console.warn("[Analytics] Refresh error:", error);
-        return formatResponse(
-          {
-            analytics: {
-              pageViews: 0,
-              sessions: 0,
-              users: 0,
-              newUsers: 0,
-              bounceRate: 0,
-              pagesPerSession: 0,
-              topPages: [],
-              trafficSources: [],
-              deviceBreakdown: [],
-              lastUpdated: new Date().toISOString(),
-            },
-            realTime: {
-              activeUsers: 0,
-              pageViews: 0,
-              currentPages: [],
-              deviceBreakdown: [],
-              countries: [],
-            },
-            conversions: {
-              conversions: 0,
-              conversionRate: 0,
-              revenue: 0,
-              goalCompletions: [],
-              lastUpdated: new Date().toISOString(),
-            },
-          },
-          null,
-          "analytics.refresh",
-        );
-      }
+      return formatResponse({
+        analytics: analyticsRes.data,
+        realTime: realTimeRes.data,
+        conversions: conversionRes.data,
+      });
     },
   },
   quotes: {

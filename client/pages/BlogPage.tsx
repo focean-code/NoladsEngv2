@@ -27,6 +27,7 @@ import {
   CardGrid
 } from "../components/ui/modern-card";
 import { ModernInput } from "../components/ui/modern-input";
+import { ModernFooter } from "../components/ModernFooter";
 
 interface BlogPost {
   id: string;
@@ -172,11 +173,11 @@ const BlogPage = () => {
               <BookOpen className="w-4 h-4" />
               Engineering Insights
             </div>
-            <h1 className="text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
               <span className="text-white">Engineering</span>
               <span className="text-yellow-400 block mt-2">Knowledge Hub</span>
             </h1>
-            <p className="text-xl lg:text-2xl text-blue-100 mb-8 leading-relaxed">
+            <p className="text-lg sm:text-xl lg:text-2xl text-blue-100 mb-8 leading-relaxed">
               Stay ahead with expert insights, industry trends, and practical knowledge 
               from electrical engineering professionals.
             </p>
@@ -209,7 +210,7 @@ const BlogPage = () => {
               </p>
             </div>
 
-            <CardGrid cols={2} gap="lg">
+            <CardGrid cols={2} gap="default">
               {featuredPosts.map((post) => {
                 const CategoryIcon = getCategoryIcon(post.category);
                 return (
@@ -218,7 +219,7 @@ const BlogPage = () => {
                       <img
                         src={post.featuredImage}
                         alt={post.title}
-                        className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                        className="w-full h-36 object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                       <div className="absolute top-4 left-4">
                         <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-medium">
@@ -227,7 +228,7 @@ const BlogPage = () => {
                       </div>
                     </div>
                     
-                    <CardContent className="p-6">
+                    <CardContent className="p-5">
                       <div className="flex items-center gap-2 mb-3">
                         <CategoryIcon className="w-4 h-4 text-blue-600" />
                         <span className="text-sm font-medium text-blue-600">{post.category}</span>
@@ -309,7 +310,7 @@ const BlogPage = () => {
               <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
             </div>
           ) : (
-            <CardGrid cols={3} gap="lg">
+            <CardGrid cols={3} gap="default">
               {filteredPosts.map((post) => {
                 const CategoryIcon = getCategoryIcon(post.category);
                 return (
@@ -318,11 +319,11 @@ const BlogPage = () => {
                       <img
                         src={post.featuredImage}
                         alt={post.title}
-                        className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300"
+                        className="w-full h-32 object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                     </div>
                     
-                    <CardContent className="p-5">
+                    <CardContent className="p-4">
                       <div className="flex items-center gap-2 mb-3">
                         <CategoryIcon className="w-4 h-4 text-blue-600" />
                         <span className="text-xs font-medium text-blue-600">{post.category}</span>
@@ -387,95 +388,7 @@ const BlogPage = () => {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-slate-900 text-white">
-        <div className="container py-16">
-          <div className="grid lg:grid-cols-4 gap-12">
-            <div className="lg:col-span-2">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 rounded-lg flex items-center justify-center overflow-hidden">
-                  <img
-                    src="/logo/logo1.png"
-                    alt="Nolads Engineering Logo"
-                    className="w-full h-full object-contain"
-                  />
-                </div>
-                <div className="font-semibold text-2xl">
-                  Nolads<span className="text-blue-400">Engineering</span>
-                </div>
-              </div>
-              <p className="text-slate-300 mb-8 leading-relaxed max-w-md">
-                Leading the future of electrical engineering with innovative solutions, 
-                exceptional service, and unwavering commitment to safety and reliability.
-              </p>
-              <Link to="/contact">
-                <ModernButton variant="primary">
-                  Get Started Today
-                  <ArrowRight className="w-4 h-4" />
-                </ModernButton>
-              </Link>
-            </div>
-            
-            <div>
-              <h4 className="font-semibold text-lg mb-6">Quick Links</h4>
-              <ul className="space-y-3">
-                {[
-                  { name: "Home", href: "/" },
-                  { name: "Services", href: "/services" },
-                  { name: "Products", href: "/products" },
-                  { name: "About", href: "/about" },
-                  { name: "Contact", href: "/contact" },
-                ].map((item) => (
-                  <li key={item.name}>
-                    <Link
-                      to={item.href}
-                      className="text-slate-300 hover:text-white transition-colors"
-                    >
-                      {item.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            
-            <div>
-              <h4 className="font-semibold text-lg mb-6">Categories</h4>
-              <ul className="space-y-3">
-                {categories.slice(1).map((category) => (
-                  <li key={category}>
-                    <button
-                      onClick={() => setSelectedCategory(category)}
-                      className="text-slate-300 hover:text-white transition-colors text-left"
-                    >
-                      {category}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-
-          <div className="border-t border-slate-700 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
-            <p className="text-slate-400 text-sm">
-              © {new Date().getFullYear()} Nolads Engineering. All rights reserved.
-            </p>
-            <div className="flex items-center gap-6 mt-4 md:mt-0">
-              <a
-                href="#"
-                className="text-slate-400 hover:text-white transition-colors text-sm"
-              >
-                Privacy Policy
-              </a>
-              <a
-                href="#"
-                className="text-slate-400 hover:text-white transition-colors text-sm"
-              >
-                Terms of Service
-              </a>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <ModernFooter />
     </div>
   );
 };

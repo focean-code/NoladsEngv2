@@ -35,6 +35,7 @@ import { useSEO } from '@/hooks/useSEO';
 import DOMPurify from 'dompurify';
 import { marked } from 'marked';
 import { Helmet } from 'react-helmet';
+import { ModernFooter } from "../components/ModernFooter";
 
 import type { BlogPost, BlogComment } from '@/types/blog';
 import type { CreateBlogComment } from '@shared/api';
@@ -575,7 +576,7 @@ export default function BlogPostPage() {
                   <img
                     src={optimizeImage(post.featured_image, { width: 1200, height: 600 })}
                     alt={post.title}
-                    className="w-full h-[300px] md:h-[400px] lg:h-[500px] object-cover"
+                    className="w-full h-[240px] md:h-[320px] lg:h-[420px] object-cover"
                   />
                 </div>
 
@@ -583,7 +584,7 @@ export default function BlogPostPage() {
                 <div className="max-w-4xl mx-auto">
                   <div
                     ref={contentRef}
-                    className="prose prose-lg prose-slate max-w-none mb-16 prose-img:w-[400px] prose-img:h-[250px] prose-img:object-cover prose-img:mx-auto prose-img:rounded-2xl prose-img:shadow-md"
+                    className="prose prose-lg prose-slate max-w-none mb-16 prose-img:w-[320px] prose-img:h-[200px] prose-img:object-cover prose-img:mx-auto prose-img:rounded-2xl prose-img:shadow-md"
                     style={{
                       lineHeight: 1.8,
                       fontSize: '1.125rem'
@@ -824,7 +825,7 @@ export default function BlogPostPage() {
                       className="group block"
                     >
                       <Card className="h-full bg-white border-slate-200 shadow-md hover:shadow-xl transition-all duration-300 group-hover:-translate-y-2 overflow-hidden">
-                        <div className="relative h-56 overflow-hidden">
+                        <div className="relative h-48 overflow-hidden">
                           <img
                             src={optimizeImage(relatedPost.featured_image, { width: 400, height: 300 })}
                             alt={relatedPost.title}
@@ -864,6 +865,7 @@ export default function BlogPostPage() {
           </div>
         )}
       </article>
+      <ModernFooter />
     </ErrorBoundary>
   );
 }

@@ -23,6 +23,7 @@ import {
   CardContent,
   CardGrid,
 } from "../components/ui/modern-card";
+import { ModernFooter } from "../components/ModernFooter";
 import { companyInfo } from "../src/companyData";
 
 const AboutPage = () => {
@@ -482,102 +483,7 @@ const AboutPage = () => {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-slate-900 text-white">
-        <div className="container py-16">
-          <div className="grid lg:grid-cols-4 gap-12">
-            <div className="lg:col-span-2">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 rounded-lg flex items-center justify-center overflow-hidden">
-                  <img
-                    src="/logo/logo1.png"
-                    alt="Nolads Engineering Logo"
-                    className="w-full h-full object-contain"
-                  />
-                </div>
-                <div className="font-semibold text-2xl">
-                  Nolads<span className="text-blue-400">Engineering</span>
-                </div>
-              </div>
-              <p className="text-slate-300 mb-8 leading-relaxed max-w-md">
-                Leading the future of electrical engineering with innovative
-                solutions, exceptional service, and unwavering commitment to
-                safety and reliability.
-              </p>
-              <Link to="/contact">
-                <ModernButton variant="primary">
-                  Get Started Today
-                  <ArrowRight className="w-4 h-4" />
-                </ModernButton>
-              </Link>
-            </div>
-
-            <div>
-              <h4 className="font-semibold text-lg mb-6">Company</h4>
-              <ul className="space-y-3">
-                {[
-                  { name: "About Us", href: "/about" },
-                  { name: "Our Team", href: "/about#team" },
-                  { name: "Careers", href: "/contact" },
-                  { name: "Case Studies", href: "/services" },
-                  { name: "Contact", href: "/contact" },
-                ].map((item) => (
-                  <li key={item.name}>
-                    <Link
-                      to={item.href}
-                      className="text-slate-300 hover:text-white transition-colors"
-                    >
-                      {item.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-semibold text-lg mb-6">Services</h4>
-              <ul className="space-y-3">
-                {[
-                  { name: "Power Systems", href: "/services/power-systems" },
-                  { name: "Safety Solutions", href: "/services/safety" },
-                  { name: "Automation", href: "/services/automation" },
-                  { name: "Monitoring", href: "/services/monitoring" },
-                ].map((item) => (
-                  <li key={item.name}>
-                    <Link
-                      to={item.href}
-                      className="text-slate-300 hover:text-white transition-colors"
-                    >
-                      {item.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-
-          <div className="border-t border-slate-700 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
-            <p className="text-slate-400 text-sm">
-              © {new Date().getFullYear()} Nolads Engineering. All rights
-              reserved.
-            </p>
-            <div className="flex items-center gap-6 mt-4 md:mt-0">
-              <a
-                href="#"
-                className="text-slate-400 hover:text-white transition-colors text-sm"
-              >
-                Privacy Policy
-              </a>
-              <a
-                href="#"
-                className="text-slate-400 hover:text-white transition-colors text-sm"
-              >
-                Terms of Service
-              </a>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <ModernFooter />
     </div>
   );
 };

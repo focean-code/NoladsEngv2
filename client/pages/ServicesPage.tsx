@@ -29,6 +29,7 @@ import {
   CardGrid,
   ServiceCard,
 } from "../components/ui/modern-card";
+import { ModernFooter } from "../components/ModernFooter";
 
 const ServicesPage = () => {
   const [services, setServices] = useState<Service[]>([]);
@@ -60,7 +61,11 @@ const ServicesPage = () => {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const response = await api.services.getAll({ active: true });
+        const response = await api.services.getAll({
+          active: true,
+          page: 1,
+          limit: 12,
+        });
         if (response.success && response.data) {
           setServices(response.data);
         } else {
@@ -183,11 +188,11 @@ const ServicesPage = () => {
               <Settings className="w-4 h-4" />
               Engineering Services
             </div>
-            <h1 className="text-5xl font-bold text-slate-900 mb-6">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 mb-6">
               Engineering Services That
               <span className="text-blue-600"> Power Innovation</span>
             </h1>
-            <p className="text-xl text-slate-600 max-w-3xl mx-auto mb-8">
+            <p className="text-lg sm:text-xl text-slate-600 max-w-3xl mx-auto mb-8">
               From initial concept to ongoing maintenance, our comprehensive
               engineering services ensure your electrical systems operate at
               peak performance with maximum safety and efficiency.
@@ -239,11 +244,11 @@ const ServicesPage = () => {
                   className="animate-slide-up group"
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
-                  <ModernCard className="h-full card-md hover:shadow-xl transition-all duration-300 border-0 shadow-lg bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 border-2 border-blue-700/50 text-center hover:scale-105 hover:rotate-1 transition-all duration-500 shadow-2xl hover:shadow-blue-500/30 hover:border-yellow-400/50 relative overflow-hidden">
+                  <ModernCard className="h-full card-sm hover:shadow-xl transition-all duration-300 border-0 shadow-lg bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 border-2 border-blue-700/50 text-center hover:scale-105 hover:rotate-1 transition-all duration-500 shadow-2xl hover:shadow-blue-500/30 hover:border-yellow-400/50 relative overflow-hidden">
                       {/* Glow effect */}
                       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-yellow-400/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                       
-                      <CardContent className="p-6 h-full flex flex-col relative z-10">
+                      <CardContent className="p-4 h-full flex flex-col relative z-10">
                         <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:shadow-xl group-hover:shadow-yellow-400/50 animate-float-medium group-hover:animate-pulse-glow transition-all duration-500">
                           <service.icon className="w-8 h-8 text-blue-900 group-hover:scale-110 transition-transform duration-500" />
                         </div>
@@ -333,8 +338,8 @@ const ServicesPage = () => {
                 className="animate-slide-up"
                 style={{ animationDelay: `${index * 100}ms` }}
               >
-                <ModernCard className="overflow-hidden card-md">
-                  <CardContent className="p-8">
+                <ModernCard className="overflow-hidden card-sm">
+                  <CardContent className="p-6">
                     <div className="flex items-start gap-6">
                       <div className="flex-shrink-0">
                         <div className="w-16 h-16 bg-blue-600 rounded-lg flex items-center justify-center">
@@ -382,8 +387,8 @@ const ServicesPage = () => {
           </div>
 
           <div className="max-w-4xl mx-auto">
-            <ModernCard variant="elevated" className="overflow-hidden card-md">
-              <CardContent className="p-12">
+            <ModernCard variant="elevated" className="overflow-hidden card-sm">
+              <CardContent className="p-8">
                 <div className="text-center">
                   <div className="flex items-center justify-center gap-1 mb-6">
                     {[...Array(5)].map((_, i) => (
@@ -447,101 +452,7 @@ const ServicesPage = () => {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-slate-900 text-white">
-        <div className="container py-16">
-          <div className="grid lg:grid-cols-4 gap-12">
-            <div className="lg:col-span-2">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 rounded-lg flex items-center justify-center overflow-hidden">
-                  <img
-                    src="/logo/logo1.png"
-                    alt="Nolads Engineering Logo"
-                    className="w-full h-full object-contain"
-                  />
-                </div>
-                <div className="font-semibold text-2xl">
-                  Nolads<span className="text-blue-400">Engineering</span>
-                </div>
-              </div>
-              <p className="text-slate-300 mb-8 leading-relaxed max-w-md">
-                Leading the future of electrical engineering with innovative
-                solutions, exceptional service, and unwavering commitment to
-                safety and reliability.
-              </p>
-              <ModernButton variant="primary">
-                Get Started Today
-                <ArrowRight className="w-4 h-4" />
-              </ModernButton>
-            </div>
-
-            <div>
-              <h4 className="font-semibold text-lg mb-6">Services</h4>
-              <ul className="space-y-3">
-                {[
-                  "Power Systems Design",
-                  "Safety Solutions",
-                  "Industrial Automation",
-                  "Performance Monitoring",
-                  "Maintenance Services",
-                ].map((item) => (
-                  <li key={item}>
-                    <a
-                      href="#"
-                      className="text-slate-300 hover:text-white transition-colors"
-                    >
-                      {item}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-semibold text-lg mb-6">Company</h4>
-              <ul className="space-y-3">
-                {[
-                  "About Us",
-                  "Our Team",
-                  "Careers",
-                  "Case Studies",
-                  "Contact",
-                ].map((item) => (
-                  <li key={item}>
-                    <a
-                      href="#"
-                      className="text-slate-300 hover:text-white transition-colors"
-                    >
-                      {item}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-
-          <div className="border-t border-slate-700 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
-            <p className="text-slate-400 text-sm">
-              © {new Date().getFullYear()} Nolads Engineering. All rights
-              reserved.
-            </p>
-            <div className="flex items-center gap-6 mt-4 md:mt-0">
-              <a
-                href="#"
-                className="text-slate-400 hover:text-white transition-colors text-sm"
-              >
-                Privacy Policy
-              </a>
-              <a
-                href="#"
-                className="text-slate-400 hover:text-white transition-colors text-sm"
-              >
-                Terms of Service
-              </a>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <ModernFooter />
     </div>
   );
 };

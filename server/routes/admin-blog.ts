@@ -9,42 +9,12 @@ import {
 
 const router = express.Router();
 
-// Add logging middleware and CORS handling
+// Add logging middleware
 router.use(requestLogger);
-router.use((req, res, next) => {
-  // Get allowed origins from environment
-  const corsOrigins = process.env.CORS_ORIGIN
-    ? process.env.CORS_ORIGIN.split(",")
-        .map((o) => o.trim())
-        .filter(Boolean)
-    : [
-        "http://localhost:5173",
-        "http://localhost:8080",
-        "http://localhost:3000",
-        "https://noladseng.com",
-        "https://www.noladseng.com",
-        "https://nolads-eng.vercel.app",
-      ];
-
-  const origin = req.get("origin");
-
-  // Set CORS headers
-  if (!origin || corsOrigins.includes(origin)) {
-    res.header("Access-Control-Allow-Origin", origin || "*");
-  }
-  res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS");
-  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  res.header("Access-Control-Max-Age", "3600");
-
-  if (req.method === "OPTIONS") {
-    return res.sendStatus(200);
-  }
-  next();
-});
 
 // GET /api/admin/blog - List all blog posts
 const getAllPosts = async (req: express.Request, res: express.Response) => {
-  const { category, status, search } = req.query;
+  const { category, status, search, page, limit } = req.query;
 
   try {
     let query = supabaseAdmin.from("blog_posts").select("*");
@@ -61,10 +31,17 @@ const getAllPosts = async (req: express.Request, res: express.Response) => {
       query = query.or(`title.ilike.%${search}%,excerpt.ilike.%${search}%`);
     }
 
+    const pageNum = Math.max(1, parseInt(String(page || "1"), 10));
+    const limitNum = Math.max(1, Math.min(100, parseInt(String(limit || "20"), 10)));
+    const from = (pageNum - 1) * limitNum;
+    const to = from + limitNum - 1;
+
     const { data, error } = await query.order("published_at", {
       ascending: false,
       nullsFirst: false
-    }).order("created_at", { ascending: false });
+    })
+      .order("created_at", { ascending: false })
+      .range(from, to);
 
     if (error) throw error;
 

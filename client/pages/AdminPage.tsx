@@ -131,7 +131,7 @@ const AdminPage = () => {
   const fetchServices = async () => {
     try {
       setLoading(true);
-      const res = await api.services.getAll();
+      const res = await api.services.getAll({ limit: 20, page: 1 });
       if (res.success) {
         const data = res.data || [];
         setServices(data);
@@ -153,7 +153,7 @@ const AdminPage = () => {
   const fetchProducts = async (search?: string) => {
     try {
       setLoading(true);
-      const res = await api.products.getAll({ search });
+      const res = await api.products.getAll({ search, limit: 20, page: 1 });
       if (res.success) {
         const data = res.data || [];
         setProducts(data);
@@ -171,7 +171,7 @@ const AdminPage = () => {
   const fetchQuotes = async (search?: string) => {
     try {
       setLoading(true);
-      const res = await api.quotes.getAll();
+      const res = await api.quotes.getAll({ limit: 25, page: 1 });
       if (res.success) {
         const data = (res.data || []) as Quote[];
         setQuotes(data);
@@ -199,7 +199,7 @@ const AdminPage = () => {
   const fetchUsers = async (search?: string) => {
     try {
       setLoading(true);
-      const res = await api.users.getAll();
+      const res = await api.users.getAll({ limit: 25, page: 1 });
       if (res.success) {
         const data = res.data || [];
         setUsers(data as any);
@@ -217,7 +217,7 @@ const AdminPage = () => {
   const fetchContacts = async () => {
     try {
       setLoading(true);
-      const res = await api.contact.getAll();
+      const res = await api.contact.getAll({ limit: 25, page: 1 });
       if (res.success) {
         setContacts((res.data || []) as any);
       }
@@ -232,7 +232,7 @@ const AdminPage = () => {
   const fetchTestimonials = async () => {
     try {
       setLoading(true);
-      const res = await api.testimonials.getAll({});
+      const res = await api.testimonials.getAll({ limit: 10, page: 1 });
       if (res.success) {
         setTestimonials((res.data || []) as any);
       }

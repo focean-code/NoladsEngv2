@@ -4,36 +4,6 @@ import type { BlogPost, ApiResponse } from "../../shared/index.ts";
 
 const router = express.Router();
 
-// CORS middleware
-router.use((req, res, next) => {
-  const corsOrigins = process.env.CORS_ORIGIN
-    ? process.env.CORS_ORIGIN.split(",")
-        .map((o) => o.trim())
-        .filter(Boolean)
-    : [
-        "http://localhost:5173",
-        "http://localhost:8080",
-        "http://localhost:3000",
-        "https://noladseng.com",
-        "https://www.noladseng.com",
-        "https://nolads-eng.vercel.app",
-      ];
-
-  const origin = req.get("origin");
-
-  if (!origin || corsOrigins.includes(origin)) {
-    res.header("Access-Control-Allow-Origin", origin || "*");
-  }
-  res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  res.header("Access-Control-Max-Age", "3600");
-
-  if (req.method === "OPTIONS") {
-    return res.sendStatus(200);
-  }
-  next();
-});
-
 // GET /api/blog - List published blog posts with pagination and filtering
 router.get("/", async (req: express.Request, res: express.Response) => {
   try {

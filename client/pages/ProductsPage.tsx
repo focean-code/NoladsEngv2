@@ -298,6 +298,10 @@ function ProductsPage() {
       }
       
       const params: any = {
+        // Default pagination to avoid fetching the entire products table.
+        // (This page is otherwise slow on large datasets.)
+        page: 1,
+        limit: 24,
         category: selectedCategory || undefined,
         search: searchTerm || undefined,
       };
@@ -690,7 +694,7 @@ function ProductsPage() {
                           ? "featured"
                           : "default"
                       }
-                      className="h-full group relative overflow-hidden card-md"
+                      className="h-full group relative overflow-hidden card-sm"
                     >
                       {/* Badge */}
                       {product.badge && (
@@ -715,7 +719,15 @@ function ProductsPage() {
                         <img
                           src={product.image}
                           alt={product.name}
-                          className="w-full h-36 object-cover group-hover:scale-105 transition-transform duration-300"
+                          loading="lazy"
+                          decoding="async"
+                          onError={(e) => {
+                            const img = e.currentTarget;
+                            // Prevent infinite onError loops.
+                            img.onerror = null;
+                            img.src = "/placeholder.svg";
+                          }}
+                          className="w-full h-32 object-cover group-hover:scale-105 transition-transform duration-300"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                       </div>
@@ -803,7 +815,7 @@ function ProductsPage() {
                       ? "featured"
                       : "default"
                   }
-                  className="animate-slide-up card-md"
+                  className="animate-slide-up card-sm"
                   style={{ animationDelay: `${index * 50}ms` }}
                 >
                   <CardContent className="p-6">
@@ -812,7 +824,14 @@ function ProductsPage() {
                         <img
                           src={product.image}
                           alt={product.name}
-                          className="w-32 h-32 object-cover rounded-lg"
+                          loading="lazy"
+                          decoding="async"
+                          onError={(e) => {
+                            const img = e.currentTarget;
+                            img.onerror = null;
+                            img.src = "/placeholder.svg";
+                          }}
+                          className="w-24 h-24 object-cover rounded-lg"
                         />
                         {product.badge && (
                           <span

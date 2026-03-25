@@ -33,6 +33,7 @@ import {
   CardDescription,
   CardGrid,
 } from "../components/ui/modern-card";
+import { ModernFooter } from "../components/ModernFooter";
 import { ModernInput, ModernTextarea } from "../components/ui/modern-input";
 import { companyInfo } from "../src/companyData";
 
@@ -352,10 +353,10 @@ const ContactPage = () => {
               <Mail className="w-4 h-4" />
               Contact Us
             </div>
-            <h1 className="text-5xl font-bold text-slate-900 mb-6">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 mb-6">
               Let's Start a<span className="text-blue-600"> Conversation</span>
             </h1>
-            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
+            <p className="text-lg sm:text-xl text-slate-600 max-w-3xl mx-auto">
               Ready to discuss your next electrical engineering project? Our
               team of experts is here to help you find the perfect solution for
               your needs.
@@ -956,102 +957,7 @@ const ContactPage = () => {
         }}
       />
 
-      {/* Footer */}
-      <footer className="bg-slate-900 text-white">
-        <div className="container py-16">
-          <div className="grid lg:grid-cols-4 gap-12">
-            <div className="lg:col-span-2">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 rounded-lg flex items-center justify-center overflow-hidden">
-                  <img
-                    src="/logo/logo1.png"
-                    alt={`${companyInfo.name} Logo`}
-                    className="w-full h-full object-contain"
-                  />
-                </div>
-                <div className="font-semibold text-2xl">
-                  Nolads<span className="text-blue-400">Engineering</span>
-                </div>
-              </div>
-              <p className="text-slate-300 mb-8 leading-relaxed max-w-md">
-                Leading the future of electrical engineering with innovative
-                solutions, exceptional service, and unwavering commitment to
-                safety and reliability.
-              </p>
-              <ModernButton variant="primary">
-                Get Started Today
-                <ArrowRight className="w-4 h-4" />
-              </ModernButton>
-            </div>
-
-            <div>
-              <h4 className="font-semibold text-lg mb-6">Contact</h4>
-              <ul className="space-y-3">
-                <li className="flex items-center gap-3">
-                  <Phone className="w-4 h-4 text-slate-400" />
-                  <span className="text-slate-300">{companyInfo.offices[0].phone.join(' / ')}</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <Mail className="w-4 h-4 text-slate-400" />
-                  <span className="text-slate-300">
-                    {companyInfo.offices[0].email}
-                  </span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <MapPin className="w-4 h-4 text-slate-400 mt-0.5" />
-                  <span className="text-slate-300">
-                    {companyInfo.offices[0].address}
-                    <br />
-                    {companyInfo.offices[0].poBox}
-                  </span>
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-semibold text-lg mb-6">Quick Links</h4>
-              <ul className="space-y-3">
-                {[
-                  { name: "Services", href: "/services" },
-                  { name: "Products", href: "/products" },
-                  { name: "About", href: "/about" },
-                  { name: "Blog", href: "/blog" },
-                ].map((item) => (
-                  <li key={item.name}>
-                    <Link
-                      to={item.href}
-                      className="text-slate-300 hover:text-white transition-colors"
-                    >
-                      {item.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-
-          <div className="border-t border-slate-700 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
-            <p className="text-slate-400 text-sm">
-              © {new Date().getFullYear()} {companyInfo.name}. All rights
-              reserved.
-            </p>
-            <div className="flex items-center gap-6 mt-4 md:mt-0">
-              <a
-                href="#"
-                className="text-slate-400 hover:text-white transition-colors text-sm"
-              >
-                Privacy Policy
-              </a>
-              <a
-                href="#"
-                className="text-slate-400 hover:text-white transition-colors text-sm"
-              >
-                Terms of Service
-              </a>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <ModernFooter />
     </div>
   );
 };

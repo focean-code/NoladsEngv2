@@ -136,6 +136,20 @@
     line-height: 1.6;
   }
 
+  /* Prevent accidental horizontal overflow from content images */
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Improve heading wrapping for narrow screens */
+  h1,
+  h2,
+  h3,
+  h4 {
+    text-wrap: balance;
+  }
+
   /* Modern Typography Scale - Enhanced */
   /* Enhanced Typography with Variable Fonts & Better Spacing */
   :root {
@@ -446,15 +460,15 @@
   /* ===== CARD SIZE UTILITIES ===== */
   .card-sm .card-content,
   .card-sm .p-6 { padding: 0.75rem; }
-  .card-sm { min-height: 180px; }
+  .card-sm { min-height: 160px; }
 
   .card-md .card-content,
   .card-md .p-6 { padding: 1rem; }
-  .card-md { min-height: 220px; }
+  .card-md { min-height: 190px; }
 
   .card-lg .card-content,
   .card-lg .p-6 { padding: 1.25rem; }
-  .card-lg { min-height: 280px; }
+  .card-lg { min-height: 240px; }
 
   /* Mobile padding tightening */
   @media (max-width: 640px) {

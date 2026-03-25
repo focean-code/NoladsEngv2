@@ -88,7 +88,7 @@ export default function BlogAdmin() {
     try {
       // Fetch all data in parallel
       const [postsRes, categoriesRes] = await Promise.all([
-        api.blog.listAll(),
+        api.blog.listAll({ page: 1, limit: 20 }),
         api.blog.getCategories()
       ]);
 
@@ -102,16 +102,24 @@ export default function BlogAdmin() {
 
       // Fetch comments for all posts
       try {
-        const allComments: BlogComment[] = [];
-        for (const post of (postsRes.data || [])) {
-          const commentsRes = await api.blog.getComments(post.id);
+        const postsForComments = (postsRes.data || []) as BlogPost[];
+        const commentsResults = await Promise.all(
+          postsForComments.map((post) => api.blog.getComments(post.id)),
+        );
+
+        const allComments = commentsResults.flatMap((commentsRes) => {
           if (commentsRes.success && Array.isArray(commentsRes.data)) {
-            allComments.push(...(commentsRes.data as BlogComment[]));
+            return commentsRes.data as BlogComment[];
           }
-        }
-        setComments(allComments.sort((a, b) => 
-          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-        ));
+          return [];
+        });
+
+        setComments(
+          allComments.sort(
+            (a, b) =>
+              new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+          ),
+        );
       } catch (err) {
         console.warn('Failed to fetch comments:', err);
         setComments([]);

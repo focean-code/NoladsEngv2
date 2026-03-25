@@ -134,13 +134,8 @@ export const setupNetworkMonitoring = () => {
 
 // Initialize PWA features
 export const initializePWA = () => {
-  // Only enable SW and install prompt in production
-  if (process.env.NODE_ENV === 'production') {
-    registerServiceWorker();
-    setupInstallPrompt();
-  } else {
-    // In dev: proactively unregister any existing SW controlling this origin
-    unregisterServiceWorker();
-  }
+  // Disable service worker registration entirely.
+  // This removes caching/interception side effects that can impact load speed.
+  void unregisterServiceWorker();
   setupNetworkMonitoring();
 };

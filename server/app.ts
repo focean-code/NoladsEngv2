@@ -1,6 +1,5 @@
 import "dotenv/config";
 import express from "express";
-import cors from "cors";
 import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
@@ -24,52 +23,6 @@ export const createApp = () => {
   const app = express();
 
   // Middleware
-  const corsOrigins = process.env.CORS_ORIGIN
-    ? process.env.CORS_ORIGIN.split(",")
-        .map((o) => o.trim())
-        .filter(Boolean)
-    : [
-        "http://localhost:5173",
-        "http://localhost:8080",
-        "http://localhost:3000",
-        "https://noladseng.com",
-        "https://www.noladseng.com",
-        "https://nolads-eng.vercel.app",
-      ];
-
-  console.log("[CORS] Configured origins:", corsOrigins);
-
-  app.use(
-    cors({
-      origin: (origin, callback) => {
-        // Allow requests with no origin (like mobile apps or curl requests)
-        if (!origin) {
-          return callback(null, true);
-        }
-
-        // Check if origin is in the whitelist
-        if (corsOrigins.includes(origin)) {
-          return callback(null, true);
-        }
-
-        // In production, always allow to prevent CORS blocking
-        if (process.env.NODE_ENV === "production") {
-          console.warn(
-            `[CORS] Warning: Origin not in whitelist but allowing in production: ${origin}`,
-          );
-          return callback(null, true);
-        }
-
-        // Log rejected origins for debugging
-        console.warn(`[CORS] Rejected origin: ${origin}`);
-        return callback(new Error("CORS policy violation"));
-      },
-      methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
-      allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
-      credentials: true,
-      maxAge: 3600,
-    }),
-  );
   app.use(express.json({ limit: process.env.UPLOAD_MAX_SIZE || "2mb" }));
 
   // Request logging middleware

@@ -43,7 +43,7 @@ export interface SupabaseAuthClient {
 }
 
 export interface SupabaseUsersClient {
-  getAll(): Promise<ApiResponse<User[]>>;
+  getAll(params?: { page?: number; limit?: number }): Promise<ApiResponse<User[]>>;
 }
 
 export interface SupabaseImagesClient {
@@ -54,7 +54,7 @@ export interface SupabaseImagesClient {
 export interface SupabaseBlogClient {
   getAll(params?: { page?: number; limit?: number; category?: string; status?: string }): Promise<ApiResponse<BlogPost[]>>;
   getBySlug(slug: string): Promise<ApiResponse<BlogPost>>;
-  listAll(): Promise<ApiResponse<BlogPost[]>>;
+  listAll(params?: { page?: number; limit?: number }): Promise<ApiResponse<BlogPost[]>>;
   create(data: CreateBlogPost): Promise<ApiResponse<BlogPost>>;
   update(id: number, data: Partial<BlogPost>): Promise<ApiResponse<BlogPost>>;
   delete(id: number): Promise<ApiResponse<{}>>;

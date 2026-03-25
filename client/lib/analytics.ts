@@ -661,10 +661,31 @@ import { ApiResponse } from "@shared/api";
 async function fetchJSON<T = any>(url: string): Promise<T> {
   // Build the full URL with API base if configured
   const apiBase = import.meta.env.VITE_API_BASE?.trim();
-  const fullUrl =
-    apiBase && apiBase.startsWith("http") && url.startsWith("/")
-      ? new URL(url, apiBase).toString()
-      : url;
+  let fullUrl = url;
+  // In the browser, always fetch same-origin relative URLs.
+  // This avoids CORS failures when `VITE_API_BASE` is an external origin.
+  if (
+    typeof window === "undefined" &&
+    apiBase &&
+    apiBase.startsWith("http") &&
+    url.startsWith("/")
+  ) {
+    // In production, avoid cross-origin API bases in the browser (prevents CORS issues).
+    try {
+      if (import.meta.env.PROD && typeof window !== "undefined") {
+        const baseOrigin = new URL(apiBase).origin;
+        if (baseOrigin !== window.location.origin) {
+          fullUrl = url;
+        } else {
+          fullUrl = new URL(url, apiBase).toString();
+        }
+      } else {
+        fullUrl = new URL(url, apiBase).toString();
+      }
+    } catch {
+      fullUrl = url;
+    }
+  }
 
   const sep = fullUrl.includes("?") ? "&" : "?";
   const tsUrl = `${fullUrl}${sep}ts=${Date.now()}`;
@@ -682,7 +703,13 @@ async function fetchJSON<T = any>(url: string): Promise<T> {
   } catch (e) {
     // If full URL failed and it's different from relative URL, try relative URL as fallback
     // BUT only if it's a same-origin request (the API base is not a full URL or matches the current origin)
-    const isCrossOrigin = apiBase && apiBase.startsWith('http') && !apiBase.includes(window.location.origin);
+    const isCrossOrigin =
+      !!(
+        apiBase &&
+        apiBase.startsWith("http") &&
+        typeof window !== "undefined" &&
+        !apiBase.includes(window.location.origin)
+      );
     
     if (fullUrl !== url && url.startsWith('/') && !isCrossOrigin) {
       console.warn(

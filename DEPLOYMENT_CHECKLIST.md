@@ -90,7 +90,8 @@ NOT HTML:
 ### Issue: CORS errors
 **Cause**: Frontend and backend on different domains  
 **Solution**:
-- Set `CORS_ORIGIN` env variable to include your domain
+- **Recommended**: Use same-origin API: leave `VITE_API_BASE` unset in production so admin calls go to `/api/*` on the same domain (no CORS).
+- If you must use cross-origin: set `CORS_ORIGIN` env variable to include your frontend domain (e.g. `https://noladseng.com`).
 - Make sure CORS middleware is before route handlers
 
 ## Quick Test Script

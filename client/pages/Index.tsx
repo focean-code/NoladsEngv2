@@ -737,7 +737,7 @@ export default function Index() {
                           <stat.icon className="w-10 h-10 text-blue-900 group-hover:scale-110 transition-transform duration-500" />
                         </div>
 
-                        <div className="text-5xl font-bold text-white mb-3 group-hover:text-yellow-300 transition-colors duration-500">
+                        <div className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-3 group-hover:text-yellow-300 transition-colors duration-500">
                           {/* Animated counter would go here - for now using static value */}
                           <span className="animate-bounce-in delay-1000">
                             {stat.value}
@@ -891,10 +891,10 @@ export default function Index() {
               className="overflow-hidden backdrop-blur-sm bg-white/95 border-2 border-white/20 shadow-2xl hover:shadow-3xl transition-all duration-500"
             >
               {/* Decorative quote marks */}
-              <div className="absolute top-4 left-6 text-6xl text-blue-100 opacity-20 animate-fade-in">
+              <div className="hidden sm:block absolute top-4 left-6 text-5xl md:text-6xl text-blue-100 opacity-20 animate-fade-in">
                 "
               </div>
-              <div className="absolute bottom-4 right-6 text-6xl text-blue-100 opacity-20 rotate-180 animate-fade-in">
+              <div className="hidden sm:block absolute bottom-4 right-6 text-5xl md:text-6xl text-blue-100 opacity-20 rotate-180 animate-fade-in">
                 "
               </div>
 

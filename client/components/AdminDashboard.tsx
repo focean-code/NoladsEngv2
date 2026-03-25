@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { api } from '../lib/api';
-import { GA4Dashboard } from './GA4Dashboard';
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState<any>({});
@@ -40,7 +39,9 @@ export default function AdminDashboard() {
 
       <div className="bg-white rounded-lg p-6 shadow">
         <h2 className="text-2xl font-bold mb-6">Website Analytics</h2>
-        <GA4Dashboard />
+        <div className="text-slate-600">
+          GA4 dashboard has been removed. View analytics in PostHog.
+        </div>
       </div>
     </div>
   );
