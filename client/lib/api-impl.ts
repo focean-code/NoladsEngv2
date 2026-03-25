@@ -448,10 +448,27 @@ export const api: SupabaseApiClient = {
     },
     update: async (id, data) => {
       try {
-        return await adminFetch(`/api/admin/blog/${id}`, {
+        const firstAttempt = await adminFetch(`/api/admin/blog/${id}`, {
           method: "PUT",
           body: JSON.stringify(data),
         });
+
+        // If the server/proxy doesn't allow PUT, fall back to other common update methods.
+        if (!firstAttempt.success && firstAttempt.error === "HTTP 405") {
+          const patchAttempt = await adminFetch(`/api/admin/blog/${id}`, {
+            method: "PATCH",
+            body: JSON.stringify(data),
+          });
+          if (!patchAttempt.success && patchAttempt.error === "HTTP 405") {
+            return await adminFetch(`/api/admin/blog/${id}`, {
+              method: "POST",
+              body: JSON.stringify(data),
+            });
+          }
+          return patchAttempt;
+        }
+
+        return firstAttempt;
       } catch (error) {
         return formatResponse(null, error, "blog.update");
       }
@@ -538,10 +555,26 @@ export const api: SupabaseApiClient = {
     },
     updateCategory: async (id: number, data) => {
       try {
-        return await adminFetch(`/api/admin/blog/categories/${id}`, {
+        const firstAttempt = await adminFetch(`/api/admin/blog/categories/${id}`, {
           method: "PUT",
           body: JSON.stringify(data),
         });
+
+        if (!firstAttempt.success && firstAttempt.error === "HTTP 405") {
+          const patchAttempt = await adminFetch(`/api/admin/blog/categories/${id}`, {
+            method: "PATCH",
+            body: JSON.stringify(data),
+          });
+          if (!patchAttempt.success && patchAttempt.error === "HTTP 405") {
+            return await adminFetch(`/api/admin/blog/categories/${id}`, {
+              method: "POST",
+              body: JSON.stringify(data),
+            });
+          }
+          return patchAttempt;
+        }
+
+        return firstAttempt;
       } catch (error) {
         return formatResponse(null, error, "blog.updateCategory");
       }

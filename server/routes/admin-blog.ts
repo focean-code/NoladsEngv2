@@ -319,12 +319,17 @@ router.get("/", authenticateAdmin, getAllPosts);
 router.get("/:id", authenticateAdmin, getById);
 router.post("/", authenticateAdmin, validateRequestBody, createPost);
 router.put("/:id", authenticateAdmin, validateRequestBody, updatePost);
+// Some deployments/proxies may block or mishandle PUT; accept POST/PATCH as aliases.
+router.post("/:id", authenticateAdmin, validateRequestBody, updatePost);
+router.patch("/:id", authenticateAdmin, validateRequestBody, updatePost);
 router.delete("/:id", authenticateAdmin, deletePost);
 
 // Category routes
 router.get("/categories", authenticateAdmin, getCategories);
 router.post("/categories", authenticateAdmin, validateRequestBody, createCategory);
 router.put("/categories/:id", authenticateAdmin, validateRequestBody, updateCategory);
+router.post("/categories/:id", authenticateAdmin, validateRequestBody, updateCategory);
+router.patch("/categories/:id", authenticateAdmin, validateRequestBody, updateCategory);
 router.delete("/categories/:id", authenticateAdmin, deleteCategory);
 
 // Comment routes
