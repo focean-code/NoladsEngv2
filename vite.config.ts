@@ -330,12 +330,6 @@ export default defineConfig(({ mode }) => {
       chunkSizeWarningLimit: 1000,
       rollupOptions: {
         external: ['socket.io-client'],
-        output: {
-          manualChunks: {
-            vendor: ['react', 'react-dom', 'react-router-dom'],
-            ui: ['@radix-ui/react-alert-dialog', '@radix-ui/react-dialog', '@radix-ui/react-toast'],
-          }
-        }
       }
     },
     plugins: [react(), adminApiPlugin(env)],

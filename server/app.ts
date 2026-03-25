@@ -26,10 +26,15 @@ export const createApp = () => {
   app.use(express.json({ limit: process.env.UPLOAD_MAX_SIZE || "2mb" }));
 
   // Request logging middleware
-  app.use((req, res, next) => {
-    console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
-    next();
-  });
+  // Logging every static asset request can severely slow production.
+  // Default OFF unless explicitly enabled.
+  const shouldLogRequests = process.env.REQUEST_LOGGING === "true";
+  if (shouldLogRequests) {
+    app.use((req, res, next) => {
+      console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+      next();
+    });
+  }
 
   // Analytics Routes (must be before other /api routes)
   app.use("/api/analytics", analyticsRoutes);
@@ -61,8 +66,22 @@ export const createApp = () => {
   if (fs.existsSync(distPath)) {
     app.use(
       express.static(distPath, {
-        maxAge: "1h",
-        etag: false,
+        // Vite hashes static assets; cache them aggressively.
+        etag: true,
+        maxAge: 0,
+        setHeaders: (res, filePath) => {
+          const isHashedAsset = /\.[a-f0-9]{8,}\./i.test(filePath);
+          if (filePath.endsWith("index.html")) {
+            res.setHeader("Cache-Control", "no-cache");
+            return;
+          }
+          if (isHashedAsset) {
+            res.setHeader(
+              "Cache-Control",
+              "public, max-age=31536000, immutable",
+            );
+          }
+        },
       }),
     );
   } else {
@@ -74,8 +93,9 @@ export const createApp = () => {
   if (fs.existsSync(publicPath)) {
     app.use(
       express.static(publicPath, {
-        maxAge: "24h",
-        etag: false,
+        // Public assets aren't fingerprinted; keep a moderate cache.
+        maxAge: "7d",
+        etag: true,
       }),
     );
   } else {

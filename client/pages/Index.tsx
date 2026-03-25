@@ -47,6 +47,8 @@ import { toast } from "sonner";
 import { getSocket } from "../lib/socket";
 import { api } from "../lib/api";
 
+const DEBUG = import.meta.env.DEV;
+
 const parseList = (raw: unknown): string[] => {
   const sanitize = (s: string) => {
     let v = s.trim();
@@ -342,15 +344,24 @@ export default function Index() {
         const productsWithParsedImages = (response.data || []).map(product => {
           let parsedImages: string[] = [];
           
-          console.log('Processing product:', product.name, 'images field:', product.images, 'image_url:', product.image_url);
+          if (DEBUG) {
+            console.log(
+              "Processing product:",
+              product.name,
+              "images field:",
+              product.images,
+              "image_url:",
+              product.image_url,
+            );
+          }
           
           // Parse images field if it exists and is a string
           if (product.images && typeof product.images === 'string') {
             try {
               parsedImages = JSON.parse(product.images);
-              console.log('Parsed images for', product.name, ':', parsedImages);
+              if (DEBUG) console.log("Parsed images for", product.name, ":", parsedImages);
             } catch (e) {
-              console.warn('Error parsing product images:', e);
+              if (DEBUG) console.warn("Error parsing product images:", e);
               parsedImages = [];
             }
           } else if (Array.isArray(product.images)) {

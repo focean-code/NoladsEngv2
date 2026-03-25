@@ -58,9 +58,11 @@ interface NewProduct extends Omit<ProductExtended, 'id' | 'created_at' | 'update
   id?: number;
 }
 
+const DEBUG = import.meta.env.DEV;
+
 // Helper function to convert server product data to client format
 const mapServerToClientProduct = (serverProduct: any): ProductExtended => {
-  console.log('[ProductsPage] Mapping server product:', serverProduct);
+  if (DEBUG) console.log('[ProductsPage] Mapping server product:', serverProduct);
   try {
     // Parse JSON strings
     let parsedImages: string[] = [];
@@ -68,16 +70,16 @@ const mapServerToClientProduct = (serverProduct: any): ProductExtended => {
     
     try {
       parsedImages = serverProduct.images ? JSON.parse(serverProduct.images) : [];
-      console.log('[ProductsPage] Parsed images:', parsedImages);
+      if (DEBUG) console.log('[ProductsPage] Parsed images:', parsedImages);
     } catch (e) {
-      console.warn('[ProductsPage] Error parsing images:', e);
+      if (DEBUG) console.warn('[ProductsPage] Error parsing images:', e);
     }
     
     try {
       parsedSpecifications = serverProduct.specifications ? JSON.parse(serverProduct.specifications) : {};
-      console.log('[ProductsPage] Parsed specifications:', parsedSpecifications);
+      if (DEBUG) console.log('[ProductsPage] Parsed specifications:', parsedSpecifications);
     } catch (e) {
-      console.warn('[ProductsPage] Error parsing specifications:', e);
+      if (DEBUG) console.warn('[ProductsPage] Error parsing specifications:', e);
     }
     
     // Map to client product format
@@ -103,7 +105,7 @@ const mapServerToClientProduct = (serverProduct: any): ProductExtended => {
       reviews: parsedSpecifications.reviews || 0,
     };
     
-    console.log('[ProductsPage] Mapped product:', mappedProduct);
+    if (DEBUG) console.log('[ProductsPage] Mapped product:', mappedProduct);
     return mappedProduct;
   } catch (error) {
     console.error('[ProductsPage] Error mapping product:', error, serverProduct);
@@ -279,7 +281,7 @@ function ProductsPage() {
   const fetchProductsData = async () => {
     setIsLoading(true);
     try {
-      console.log('[ProductsPage] Starting data fetch');
+      if (DEBUG) console.log('[ProductsPage] Starting data fetch');
       
       // Try to get raw products data first to check if the database is accessible
       const { data: rawProducts, error: rawError } = await supabase
@@ -287,7 +289,7 @@ function ProductsPage() {
         .select('*')
         .limit(1);
       
-      console.log('[ProductsPage] Raw products test:', {
+      if (DEBUG) console.log('[ProductsPage] Raw products test:', {
         success: !!rawProducts,
         error: rawError,
         count: rawProducts?.length
@@ -313,10 +315,10 @@ function ProductsPage() {
       if (priceRange[0] > minPrice) params.minPrice = priceRange[0];
       if (priceRange[1] < maxPrice) params.maxPrice = priceRange[1];
 
-      console.log('[ProductsPage] Fetching with params:', params);
+      if (DEBUG) console.log('[ProductsPage] Fetching with params:', params);
       const response = await api.products.getAll(params);
       
-      console.log('[ProductsPage] API Response:', {
+      if (DEBUG) console.log('[ProductsPage] API Response:', {
         success: response.success,
         error: response.error,
         dataLength: response.data?.length,
@@ -330,7 +332,7 @@ function ProductsPage() {
       
       if (response.success && Array.isArray(response.data)) {
         const extendedProducts = response.data.map((product: any) => {
-          console.log('[ProductsPage] Processing product:', { 
+          if (DEBUG) console.log('[ProductsPage] Processing product:', { 
             id: product.id, 
             name: product.name,
             category: product.category,
@@ -341,7 +343,7 @@ function ProductsPage() {
           });
           return mapServerToClientProduct(product as ServerProduct);
         });
-        console.log('[ProductsPage] Successfully mapped products:', {
+        if (DEBUG) console.log('[ProductsPage] Successfully mapped products:', {
           count: extendedProducts.length,
           firstProduct: extendedProducts[0]
         });

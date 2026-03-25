@@ -7,9 +7,8 @@ import NotificationSystem from "./components/NotificationSystem";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { RouterProvider } from "react-router-dom";
-import { Suspense, useEffect } from "react";
+import { useEffect } from "react";
 import ErrorBoundary from "./components/ErrorBoundary";
-import PageLoading from "./components/LoadingStates";
 import { router } from "./router";
 import { AuthProvider } from "./hooks/useAuth";
 import { initializePWA } from "./lib/pwa";
@@ -35,9 +34,7 @@ const App = () => {
           <Sonner />
           <NotificationSystem />
           <AuthProvider>
-            <Suspense fallback={<PageLoading />}>
-              <RouterProvider router={router} future={{ v7_startTransition: true }} />
-            </Suspense>
+            <RouterProvider router={router} future={{ v7_startTransition: true }} />
           </AuthProvider>
         </TooltipProvider>
       </QueryClientProvider>

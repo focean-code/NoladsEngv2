@@ -13,12 +13,13 @@
  * 4. Optionally: VITE_POSTHOG_HOST=https://us.i.posthog.com (default) or your self-hosted URL
  */
 
-import posthog from 'posthog-js';
-
 const POSTHOG_KEY = import.meta.env.VITE_POSTHOG_KEY as string | undefined;
 const POSTHOG_HOST = (import.meta.env.VITE_POSTHOG_HOST as string | undefined) || 'https://us.i.posthog.com';
 
 let initialized = false;
+let posthogClient: any = null;
+const enableSessionRecording =
+  import.meta.env.DEV || import.meta.env.VITE_POSTHOG_SESSION_RECORDING === "true";
 
 export function initPostHog(): void {
   if (initialized) return;
@@ -29,34 +30,45 @@ export function initPostHog(): void {
     return;
   }
 
-  posthog.init(POSTHOG_KEY, {
-    api_host: POSTHOG_HOST,
-    // Capture pageviews manually (we send them via trackPageView on route change)
-    capture_pageview: false,
-    // Record sessions (can disable by setting to false)
-    session_recording: {
-      recordCrossOriginIframes: false,
-    },
-    // Respect Do Not Track
-    respect_dnt: true,
-    // Disable in development by default
-    loaded: (ph) => {
-      if (import.meta.env.DEV) {
-        // Still initialize in dev so you can test, but don't log to console
-        // console.info('[PostHog] Loaded in development mode. Events will be captured.');
-      }
-    },
-  });
+  // Dynamically import so the posthog-js bundle is not part of the first-load chunk.
+  void import('posthog-js')
+    .then((mod) => {
+      const posthog = mod.default;
+      posthogClient = posthog;
 
-  initialized = true;
+      posthog.init(POSTHOG_KEY, {
+        api_host: POSTHOG_HOST,
+        // Capture pageviews manually (we send them via trackPageView on route change)
+        capture_pageview: false,
+        // Session recordings are heavy; disable by default in production.
+        session_recording: enableSessionRecording
+          ? {
+              recordCrossOriginIframes: false,
+            }
+          : false,
+        // Respect Do Not Track
+        respect_dnt: true,
+        loaded: () => {
+          if (import.meta.env.DEV) {
+            // In dev, keep initialization but avoid noisy logs.
+          }
+        },
+      });
+
+      initialized = true;
+    })
+    .catch((err) => {
+      // If analytics fails to load, never block the app UI.
+      console.warn('[PostHog] Failed to load posthog-js:', err);
+    });
 }
 
 /**
  * Track a page view. Call this on every route change.
  */
 export function trackPageView(path?: string): void {
-  if (!initialized || !POSTHOG_KEY) return;
-  posthog.capture('$pageview', {
+  if (!initialized || !POSTHOG_KEY || !posthogClient) return;
+  posthogClient.capture('$pageview', {
     $current_url: path ?? window.location.href,
   });
 }
@@ -65,24 +77,22 @@ export function trackPageView(path?: string): void {
  * Track a custom event.
  */
 export function trackEvent(event: string, properties?: Record<string, unknown>): void {
-  if (!initialized || !POSTHOG_KEY) return;
-  posthog.capture(event, properties);
+  if (!initialized || !POSTHOG_KEY || !posthogClient) return;
+  posthogClient.capture(event, properties);
 }
 
 /**
  * Identify a logged-in user.
  */
 export function identifyUser(userId: string, properties?: Record<string, unknown>): void {
-  if (!initialized || !POSTHOG_KEY) return;
-  posthog.identify(userId, properties);
+  if (!initialized || !POSTHOG_KEY || !posthogClient) return;
+  posthogClient.identify(userId, properties);
 }
 
 /**
  * Reset the user identity on logout.
  */
 export function resetUser(): void {
-  if (!initialized || !POSTHOG_KEY) return;
-  posthog.reset();
+  if (!initialized || !POSTHOG_KEY || !posthogClient) return;
+  posthogClient.reset();
 }
-
-export { posthog };
